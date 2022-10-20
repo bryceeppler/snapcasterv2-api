@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import concurrent.futures
+from fastapi.middleware.cors import CORSMiddleware
 
 # Scrapers
 from scrapers.base.GauntletScraper import GauntletScraper
@@ -18,6 +19,18 @@ class SingleCardSearch(BaseModel):
 
 
 app = FastAPI()
+
+origins = [
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 data = [
     {
@@ -138,6 +151,7 @@ async def search_single(request: SingleCardSearch):
     # refomatting step
 
     # Join all results into one list
+    # Each entry must have a unique id
     joinedResults = []
     for result in results:
         for entry in result:
@@ -150,7 +164,7 @@ async def search_single(request: SingleCardSearch):
                     "website": entry["website"],
                     "condition": stock["condition"],
                     "price": stock["price"],
-
+                    "id": len(joinedResults) + 1
                 })
 
 
