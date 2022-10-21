@@ -38,6 +38,11 @@ class GauntletScraper(Scraper):
             if not self.compareCardNames(self.cardName, checkName):
                 continue
 
+         
+            # This is temporary to get rid of dragon shield sleeves lol
+            if "dragon shield" and "sleeve" in checkName.lower():
+                continue
+
             # For this card variant, get the stock
             variantStockList = []
             variantConditions = card.select('div.variant-row')

@@ -40,6 +40,8 @@ class HouseOfCardsScraper(Scraper):
 
             # check to see name is correct
             checkName = productCardLower.select_one('a').getText()
+            if "art card" in checkName.lower():
+                continue
             if not self.compareCardNames(self.cardName, checkName):
                 continue
 
