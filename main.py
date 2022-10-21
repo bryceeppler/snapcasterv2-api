@@ -22,6 +22,7 @@ app = FastAPI()
 
 origins = [
     "http://127.0.0.1:5173",
+    "http://localhost:5173",
     "https://snapcasterv2-client.vercel.app",
     "https://snapcaster.bryceeppler.com",
     "https://www.snapcaster.ca",
