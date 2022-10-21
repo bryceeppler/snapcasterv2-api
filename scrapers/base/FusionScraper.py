@@ -34,7 +34,7 @@ class FusionScraper(Scraper):
             # Verify card name is correct
             try:
                 checkName = card.select_one('div.image-meta div.image a')['title']
-                if "art card" in checkName.getText().lower():
+                if "art card" in checkName.lower():
                     continue
 
             except:
