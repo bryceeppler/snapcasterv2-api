@@ -41,6 +41,11 @@ class Four01Scraper(Scraper):
             image = item['t']
             url = self.siteUrl + item['u']
 
+            # 401 games has an art series for some of their art card sets
+            # for example Neon Dynasty Art Series
+            if "art series" in set.lower():
+                continue
+
             if not self.compareCardNames(self.cardName, name):
                 continue 
             
