@@ -9,6 +9,7 @@ from scrapers.base.Four01Scraper import Four01Scraper
 from scrapers.base.FusionScraper import FusionScraper
 from scrapers.base.KanatacgScraper import KanatacgScraper
 from scrapers.base.HouseOfCardsScraper import HouseOfCardsScraper
+from scrapers.base.EverythingGamesScraper import EverythingGamesScraper
 
 # Pydantic Models
 
@@ -65,6 +66,8 @@ async def search_single(request: SingleCardSearch):
     kanatacgScraper = KanatacgScraper(request.cardName)
     fusionScraper = FusionScraper(request.cardName)
     four01Scraper = Four01Scraper(request.cardName)
+    everythingGamesScraper = EverythingGamesScraper(request.cardName)
+
 
     # Map scrapers to an identifier keyword
     scraperMap = {
@@ -73,6 +76,7 @@ async def search_single(request: SingleCardSearch):
         "kanatacg": kanatacgScraper,
         "fusion": fusionScraper,
         "four01": four01Scraper,
+        "everythinggames": everythingGamesScraper,
     }
 
     # Filter out scrapers that are not requested in request.websites
