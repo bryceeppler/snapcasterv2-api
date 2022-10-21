@@ -24,6 +24,8 @@ origins = [
     "http://127.0.0.1:5173",
     "https://snapcasterv2-client.vercel.app",
     "https://snapcaster.bryceeppler.com",
+    "https://www.snapcaster.ca",
+    "https://snapcaster.ca",
 ]
 
 app.add_middleware(
