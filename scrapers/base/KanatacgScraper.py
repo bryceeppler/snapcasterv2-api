@@ -36,7 +36,7 @@ class KanatacgScraper(Scraper):
             # Verify card name is correct
             checkNameTag = card.select('td')[1]
             checkName = checkNameTag.select_one('a')        
-            print(checkName)
+ 
             if not checkName:
                 continue
             elif "art card" in checkName.getText().lower():
