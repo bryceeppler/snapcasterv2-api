@@ -31,17 +31,18 @@ class GauntletScraper(Scraper):
 
         for card in cards:
             # Check to see it is a magic card
-            # TODO
+            # we will do this by checking the link to the product. if it contains 
+            # "magic_singles" then it is a magic card
+            link = self.baseUrl + card.select_one('div.image a')['href']
+            if "magic_singles" not in link:
+                continue
+            print(link)
 
             # Verify card name is correct
             checkName = card.select_one('div.image a')['title']
             if not self.compareCardNames(self.cardName, checkName):
                 continue
 
-         
-            # This is temporary to get rid of dragon shield sleeves lol
-            if "dragon shield" and "sleeve" in checkName.lower():
-                continue
 
             # For this card variant, get the stock
             variantStockList = []
@@ -74,7 +75,6 @@ class GauntletScraper(Scraper):
                 continue
 
             name = card.select_one('div.image a')['title']
-            link = self.baseUrl + card.select_one('div.image a')['href']
             imageUrl = card.select_one('img')['src']
             setName = card.select_one('span.category').getText()
 
