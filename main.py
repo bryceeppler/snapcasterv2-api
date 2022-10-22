@@ -82,7 +82,10 @@ async def search_single(request: SingleCardSearch):
 
     # Filter out scrapers that are not requested in request.websites
     # scrapers = [scraperMap[scraper] for scraper in request.websites]
-    scrapers = [everythingGamesScraper]
+    scrapers = [everythingGamesScraper,
+                four01Scraper,
+                
+                ]
 
     # Run scrapers in parallel
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
