@@ -57,7 +57,8 @@ async def search_single(request: SingleCardSearch):
     def transform(scraper):
         scraper.scrape()
         scraperResults = scraper.getResults()
-        results.append(scraperResults)
+        for result in scraperResults:
+            results.append(result)
         return
 
     # Arrange scrapers
@@ -80,16 +81,8 @@ async def search_single(request: SingleCardSearch):
     }
 
     # Filter out scrapers that are not requested in request.websites
-    scrapers = [scraperMap[scraper] for scraper in request.websites]
-
-    # This adds all scrapers to the thread pool
-    # scrapers = [
-    #     houseOfCardsScraper,
-    #     gauntletScraper,
-    #     kanatacgScraper,
-    #     fusionScraper,
-    #     four01Scraper
-    # ]
+    # scrapers = [scraperMap[scraper] for scraper in request.websites]
+    scrapers = [everythingGamesScraper]
 
     # Run scrapers in parallel
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
@@ -103,20 +96,23 @@ async def search_single(request: SingleCardSearch):
 
     # Join all results into one list
     # Each entry must have a unique id
-    joinedResults = []
-    for result in results:
-        for entry in result:
-            for stock in entry["stock"]:
-                joinedResults.append({
-                    "name": entry["name"],
-                    "set": entry["set"],
-                    "image": entry["image"],
-                    "link": entry["link"],
-                    "website": entry["website"],
-                    "condition": stock["condition"],
-                    "price": stock["price"],
-                    "id": len(joinedResults) + 1
-                })
+    # joinedResults = []
+    # for result in results:
+    #     for entry in result:
+    #         for stock in entry["stock"]:
+    #             joinedResults.append({
+    #                 "name": entry["name"],
+    #                 "set": entry["set"],
+    #                 "image": entry["image"],
+    #                 "link": entry["link"],
+    #                 "website": entry["website"],
+    #                 "condition": stock["condition"],
+    #                 "price": stock["price"],
+    #                 "id": len(joinedResults) + 1
+    #             })
+
+    # join all lists into one list
 
 
-    return joinedResults
+    return results
+
