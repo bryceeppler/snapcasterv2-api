@@ -86,8 +86,8 @@ async def search_single(request: SingleCardSearch):
         # everythingGamesScraper,
         # four01Scraper,
         # fusionScraper,
-        kanatacgScraper,
-        # gauntletScraper,
+        # kanatacgScraper,
+        gauntletScraper,
                 
     ]
 
