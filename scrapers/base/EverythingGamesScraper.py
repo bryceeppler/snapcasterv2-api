@@ -90,12 +90,14 @@ class EverythingGamesScraper(Scraper):
         # print (data)
         # parse the json data
         for card in data['products']:
-
-            # titleAndSet = "Card name goes here [Set name]"
             titleAndSet = card['title']
             # split the title and set
             title = titleAndSet.split("[")[0].strip()
             setName = titleAndSet.split("[")[1].split("]")[0].strip()
+
+            # remove any excess tags inside () or [] in the title
+            title = title.split("(")[0].strip()
+
             image = card['img']
             handle = card['handle']
             link = f"{self.siteUrl}/products/{handle}"
