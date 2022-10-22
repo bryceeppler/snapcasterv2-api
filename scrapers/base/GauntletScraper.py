@@ -81,7 +81,7 @@ class GauntletScraper(Scraper):
                     variantStockList.append({"condition": condition, "price": price})
                     self.results.append({
                         "name": name,
-                        "imageUrl": imageUrl,
+                        "image": imageUrl,
                         "link": link,
                         "setName": setName,
                         "foil": foil,
