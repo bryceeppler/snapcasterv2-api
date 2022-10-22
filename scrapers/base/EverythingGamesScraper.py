@@ -40,7 +40,9 @@ class EverythingGamesScraper(Scraper):
         #   --compressed
         
         # make the card name url friendly
-        cardName = self.cardName.replace(" ", "%20").replace('"', '%22').replace("'", "%27")
+        cardName = self.cardName.replace('"', '%22').replace("'", "%27")
+        print("cardName that goes into request:" + cardName)
+        
         response = requests.post(self.url, 
             json={
                 "storeUrl": "everything-games-ca.myshopify.com",
@@ -83,6 +85,7 @@ class EverythingGamesScraper(Scraper):
             })
         # Load the response
         data = json.loads(response.text)
+        print("number of results from everythinggames: ", data['count'])
 
         # print (data)
         # parse the json data
