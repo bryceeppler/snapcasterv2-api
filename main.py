@@ -84,8 +84,10 @@ async def search_single(request: SingleCardSearch):
     # scrapers = [scraperMap[scraper] for scraper in request.websites]
     scrapers = [
         # everythingGamesScraper,
-        four01Scraper,
+        # four01Scraper,
         # fusionScraper,
+        kanatacgScraper,
+        # gauntletScraper,
                 
     ]
 

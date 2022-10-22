@@ -44,6 +44,18 @@ class KanatacgScraper(Scraper):
             if not self.compareCardNames(self.cardName, checkName.getText()):
                 continue
 
+            name = card.select('td')[1].select_one('a').getText()
+            # the foil status is in the name here as "Card Name - Foil"
+            foil = False
+            if "foil" in name.lower():
+                foil = True
+                name = name.replace(" - Foil", "")
+
+            
+            link = self.baseUrl + card.select('td')[1].select_one('a')['href']
+            imageUrl = card.select_one('td a')['href']
+            setName = card.select('td')[1].select_one('small').getText()
+
             # For this card variant, get the stock
             variantStockList = []
             variantConditions = card.select('tr.variantRow')
@@ -62,28 +74,35 @@ class KanatacgScraper(Scraper):
                 elif "Heav" in condition:
                     condition="HP"
                 elif "Damaged" or "DMG" in condition:
-                    condition="HP"
+                    condition="DMG"
                 price = float(c.select('td')[1].getText().replace('CAD$ ', ''))
                 if (condition, price) not in variantStockList:
-                    variantStockList.append({"condition": condition, "price": price})
+                    self.results.append({
+                        'name': name,
+                        'set': setName,
+                        'condition': condition,
+                        'price': price,
+                        'image': imageUrl,
+                        'link': link,
+                        'foil': foil,
+                        'website': self.website
+                    })
+                    # variantStockList.append({"condition": condition, "price": price})
                 
-            # If stockList is empty, continue
-            if not variantStockList:
-                continue
+        #     # If stockList is empty, continue
+        #     if not variantStockList:
+        #         continue
 
-            name = card.select('td')[1].select_one('a').getText()
-            link = self.baseUrl + card.select('td')[1].select_one('a')['href']
-            imageUrl = card.select_one('td a')['href']
-            setName = card.select('td')[1].select_one('small').getText()
 
-            results = {
-                'name': name,
-                'link': link,
-                'image': imageUrl,
-                'set': setName,
-                'stock': variantStockList,
-                'website': self.website
-            }
-            stockList.append(results)
 
-        self.results = stockList
+        #     results = {
+        #         'name': name,
+        #         'link': link,
+        #         'image': imageUrl,
+        #         'set': setName,
+        #         'stock': variantStockList,
+        #         'website': self.website
+        #     }
+        #     stockList.append(results)
+
+        # self.results = stockList
