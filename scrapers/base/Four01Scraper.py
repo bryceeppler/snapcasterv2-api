@@ -53,6 +53,11 @@ class Four01Scraper(Scraper):
             # For example "(DMU) (#367)"
             name = name.split('(')[0].rstrip()
 
+            # there can even be more tags like "Card Name - Borderless", remove em
+            if '-' in name:
+                name = name.split('-')[0].rstrip()
+                
+
             # 401 games has an art series for some of their art card sets
             # for example Neon Dynasty Art Series
             if "art series" in setName.lower():

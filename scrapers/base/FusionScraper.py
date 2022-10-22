@@ -54,6 +54,11 @@ class FusionScraper(Scraper):
                 foil = True
                 name = name.replace(" - Foil", "")
 
+            # sometimes there are other weird tags in the name, like "Card Name - Foil - The List"
+            # remove those too
+            if " - " in name:
+                name = name.split(" - ")[0]
+            
             
             link = self.baseUrl + card.select_one('div.image-meta div.image a')['href']
             imageUrl = card.select_one('div.image-meta div.image a img')['src']

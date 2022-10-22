@@ -51,6 +51,9 @@ class KanatacgScraper(Scraper):
                 foil = True
                 name = name.replace(" - Foil", "")
 
+            # there can even be more tags like "Card Name - Borderless", remove em
+            if '-' in name:
+                name = name.split('-')[0].rstrip()
             
             link = self.baseUrl + card.select('td')[1].select_one('a')['href']
             imageUrl = card.select_one('td a')['href']

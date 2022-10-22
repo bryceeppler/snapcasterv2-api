@@ -14,5 +14,5 @@ curl 'https://portal.binderpos.com/external/shopify/products/forStore' \
   -H 'sec-fetch-mode: cors' \
   -H 'sec-fetch-site: cross-site' \
   -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36' \
-  --data-raw '{"storeUrl":"everything-games-ca.myshopify.com","game":"mtg","strict":null,"sortTypes":[{"type":"price","asc":false,"order":1}],"variants":null,"title":"shock","priceGreaterThan":0,"priceLessThan":null,"instockOnly":true,"limit":18,"offset":0,"setNames":[],"colors":[],"rarities":[],"types":[]}' \
+  --data-raw '{"storeUrl":"everything-games-ca.myshopify.com","game":"mtg","strict":null,"sortTypes":[{"type":"price","asc":false,"order":1}],"variants":null,"title":"cavern of souls","priceGreaterThan":0,"priceLessThan":null,"instockOnly":true,"limit":18,"offset":0,"setNames":[],"colors":[],"rarities":[],"types":[]}' \
   --compressed

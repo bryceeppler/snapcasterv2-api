@@ -48,7 +48,12 @@ class HouseOfCardsScraper(Scraper):
 
             # <a> tag has href pointing to card's page and inner text is the card's name
             tag = productCardLower.select_one('a')
-            name = tag.getText().replace("(Borderless)", "").rstrip()
+            name = tag.getText()
+            # sometimes there are weird tags in the name like "Card name (Borderless)"
+            # remove them
+            if '(' in name:
+                name = name.split('(')[0].strip()
+                
             baseUrl = 'https://houseofcards.ca'
             link =  baseUrl + tag.get('href')
 
