@@ -9,6 +9,7 @@ from scrapers.base.Four01Scraper import Four01Scraper
 from scrapers.base.FusionScraper import FusionScraper
 from scrapers.base.KanatacgScraper import KanatacgScraper
 from scrapers.base.HouseOfCardsScraper import HouseOfCardsScraper
+from scrapers.base.EverythingGamesScraper import EverythingGamesScraper
 
 # Pydantic Models
 
@@ -56,7 +57,8 @@ async def search_single(request: SingleCardSearch):
     def transform(scraper):
         scraper.scrape()
         scraperResults = scraper.getResults()
-        results.append(scraperResults)
+        for result in scraperResults:
+            results.append(result)
         return
 
     # Arrange scrapers
@@ -65,6 +67,8 @@ async def search_single(request: SingleCardSearch):
     kanatacgScraper = KanatacgScraper(request.cardName)
     fusionScraper = FusionScraper(request.cardName)
     four01Scraper = Four01Scraper(request.cardName)
+    everythingGamesScraper = EverythingGamesScraper(request.cardName)
+
 
     # Map scrapers to an identifier keyword
     scraperMap = {
@@ -73,18 +77,20 @@ async def search_single(request: SingleCardSearch):
         "kanatacg": kanatacgScraper,
         "fusion": fusionScraper,
         "four01": four01Scraper,
+        "everythinggames": everythingGamesScraper,
     }
+
+    print("request.websites", request.websites)
 
     # Filter out scrapers that are not requested in request.websites
     scrapers = [scraperMap[scraper] for scraper in request.websites]
-
-    # This adds all scrapers to the thread pool
+    
     # scrapers = [
-    #     houseOfCardsScraper,
-    #     gauntletScraper,
-    #     kanatacgScraper,
+    #     everythingGamesScraper,
+    #     four01Scraper,
     #     fusionScraper,
-    #     four01Scraper
+    #     kanatacgScraper,
+    #     gauntletScraper,      
     # ]
 
     # Run scrapers in parallel
@@ -99,20 +105,23 @@ async def search_single(request: SingleCardSearch):
 
     # Join all results into one list
     # Each entry must have a unique id
-    joinedResults = []
-    for result in results:
-        for entry in result:
-            for stock in entry["stock"]:
-                joinedResults.append({
-                    "name": entry["name"],
-                    "set": entry["set"],
-                    "image": entry["image"],
-                    "link": entry["link"],
-                    "website": entry["website"],
-                    "condition": stock["condition"],
-                    "price": stock["price"],
-                    "id": len(joinedResults) + 1
-                })
+    # joinedResults = []
+    # for result in results:
+    #     for entry in result:
+    #         for stock in entry["stock"]:
+    #             joinedResults.append({
+    #                 "name": entry["name"],
+    #                 "set": entry["set"],
+    #                 "image": entry["image"],
+    #                 "link": entry["link"],
+    #                 "website": entry["website"],
+    #                 "condition": stock["condition"],
+    #                 "price": stock["price"],
+    #                 "id": len(joinedResults) + 1
+    #             })
+
+    # join all lists into one list
 
 
-    return joinedResults
+    return results
+

@@ -27,8 +27,6 @@ class GauntletScraper(Scraper):
         sp = BeautifulSoup(page.text, 'html.parser')
         cards = sp.select('li.product div.inner')
 
-        stockList = []
-
         for card in cards:
             # Check to see it is a magic card
             # we will do this by checking the link to the product. if it contains 
@@ -36,7 +34,6 @@ class GauntletScraper(Scraper):
             link = self.baseUrl + card.select_one('div.image a')['href']
             if "magic_singles" not in link:
                 continue
-            print(link)
 
             # Verify card name is correct
             checkName = card.select_one('div.image a')['title']
@@ -44,6 +41,18 @@ class GauntletScraper(Scraper):
                 continue
 
 
+            name = card.select_one('div.image a')['title']
+            imageUrl = card.select_one('img')['src']
+            setName = card.select_one('span.category').getText()
+
+            # Sometimes the foil status is in the name, so we need to remove it
+            # Card Name - Foil
+            foil = False
+            if '- Foil' in name:
+                name = name.replace('- Foil', '').rstrip()
+                foil = True
+
+            
             # For this card variant, get the stock
             variantStockList = []
             variantConditions = card.select('div.variant-row')
@@ -70,22 +79,13 @@ class GauntletScraper(Scraper):
                 # Verify condition and price are not duplicates
                 if (condition, price) not in variantStockList:
                     variantStockList.append({"condition": condition, "price": price})
-
-            if len(variantStockList) == 0:
-                continue
-
-            name = card.select_one('div.image a')['title']
-            imageUrl = card.select_one('img')['src']
-            setName = card.select_one('span.category').getText()
-
-            results = {
-                'name': name,
-                'link': link,
-                'image': imageUrl,
-                'set': setName,
-                'stock': variantStockList,
-                'website': self.website
-            }
-            stockList.append(results)
-            
-        self.results = stockList
+                    self.results.append({
+                        "name": name,
+                        "imageUrl": imageUrl,
+                        "link": link,
+                        "setName": setName,
+                        "foil": foil,
+                        "condition": condition,
+                        "price": price,
+                        "website": self.website
+                    })

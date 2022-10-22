@@ -37,13 +37,25 @@ class Four01Scraper(Scraper):
         # get the products
         for item in data['items']:
             name = item['l']
-            set = item['v']
+            setName = item['v']
             image = item['t']
             url = self.siteUrl + item['u']
 
+            # Sometimes the foil status is in the name, so we need to remove it
+            # and update the foil status
+            # Card Name (Foil) (DMU)
+            foil = False
+            if '(Foil)' in name:
+                name = name.replace('(Foil)', '')
+                foil = True
+
+            # There is also some tags in parenthesis that we need to remove
+            # For example "(DMU) (#367)"
+            name = name.split('(')[0].rstrip()
+
             # 401 games has an art series for some of their art card sets
             # for example Neon Dynasty Art Series
-            if "art series" in set.lower():
+            if "art series" in setName.lower():
                 continue
 
             if not self.compareCardNames(self.cardName, name):
@@ -67,14 +79,24 @@ class Four01Scraper(Scraper):
                     elif "HP" in condition:
                         condition="HP" 
                     elif "DMG" in condition:
-                        condition="HP"
+                        condition="DMG"
                     elif "Damaged" in condition:
-                        condition="HP"
+                        condition="DMG"
                     elif "Default" in condition:
                         condition="NM"
 
                     price = float(item[1][1][0].replace("CAD:" , ""))
-                    stock.append({"condition": condition, "price": price})
+                    cardList.append({
+                        'name': name,
+                        'set': setName,
+                        'condition': condition,
+                        'price': price,
+                        'image': image,
+                        'link': url,
+                        'foil': foil,
+                        'website': self.website
+                    })
+                    # stock.append({"condition": condition, "price": price})
                 
                 elif item[0][0] == 'Price':
                     try:
@@ -88,26 +110,25 @@ class Four01Scraper(Scraper):
                         elif "HP" in condition:
                             condition="HP" 
                         elif "DMG" in condition:
-                            condition="HP"
+                            condition="DMG"
                         elif "Damaged" in condition:
-                            condition="HP"
+                            condition="DMG"
                         elif "Default" in condition:
                             condition="NM"
 
                         price = float(item[0][1][0].replace("CAD:" , ""))
-                        stock.append({'condition':condition, 'price':price})
+                        cardList.append({
+                            'name': name,
+                            'set': setName,
+                            'condition': condition,
+                            'price': price,
+                            'image': image,
+                            'link': url,
+                            'foil': foil,
+                            'website': self.website
+                        })
                     except:
                         pass
-
-
-            cardList.append({
-                'name': name,
-                'set': set,
-                'image': image,
-                'link': url,
-                'stock': stock,
-                'website': self.website
-            })
 
         self.results = cardList
 
