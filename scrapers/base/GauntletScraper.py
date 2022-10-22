@@ -86,5 +86,6 @@ class GauntletScraper(Scraper):
                         "setName": setName,
                         "foil": foil,
                         "condition": condition,
-                        "price": price
+                        "price": price,
+                        "website": self.website
                     })
