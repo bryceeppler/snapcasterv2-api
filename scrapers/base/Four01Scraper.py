@@ -41,6 +41,18 @@ class Four01Scraper(Scraper):
             image = item['t']
             url = self.siteUrl + item['u']
 
+            # Sometimes the foil status is in the name, so we need to remove it
+            # and update the foil status
+            # Card Name (Foil) (DMU)
+            foil = False
+            if '(Foil)' in name:
+                name = name.replace('(Foil)', '')
+                foil = True
+
+            # There is also some tags in parenthesis that we need to remove
+            # For example "(DMU) (#367)"
+            name = name.split('(')[0].rstrip()
+
             # 401 games has an art series for some of their art card sets
             # for example Neon Dynasty Art Series
             if "art series" in setName.lower():
@@ -81,6 +93,7 @@ class Four01Scraper(Scraper):
                         'price': price,
                         'image': image,
                         'link': url,
+                        'foil': foil,
                         'website': self.website
                     })
                     # stock.append({"condition": condition, "price": price})
@@ -97,9 +110,9 @@ class Four01Scraper(Scraper):
                         elif "HP" in condition:
                             condition="HP" 
                         elif "DMG" in condition:
-                            condition="HP"
+                            condition="DMG"
                         elif "Damaged" in condition:
-                            condition="HP"
+                            condition="DMG"
                         elif "Default" in condition:
                             condition="NM"
 
@@ -111,6 +124,7 @@ class Four01Scraper(Scraper):
                             'price': price,
                             'image': image,
                             'link': url,
+                            'foil': foil,
                             'website': self.website
                         })
                     except:

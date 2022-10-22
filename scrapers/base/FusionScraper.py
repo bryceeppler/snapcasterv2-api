@@ -48,6 +48,13 @@ class FusionScraper(Scraper):
 
 
             name = checkName
+            # the foil status is in the name here as "Card Name - Foil"
+            foil = False
+            if "foil" in name.lower():
+                foil = True
+                name = name.replace(" - Foil", "")
+
+            
             link = self.baseUrl + card.select_one('div.image-meta div.image a')['href']
             imageUrl = card.select_one('div.image-meta div.image a img')['src']
             setName = card.select_one('div.image-meta div.meta span.category').getText()
@@ -62,33 +69,43 @@ class FusionScraper(Scraper):
             elif "Heavy" in condition:
                 condition="HP"
             elif "Damaged" in condition:
-                condition="HP"
+                condition="DMG"
 
             price = float(card.select_one('form.add-to-cart-form')['data-price'].replace('CAD$ ', ''))
-            added = False
+            # added = False
 
-            # Check to see if entry already exists in stockList
-            try:
-                for dict in stockList:
-                    if dict['name'].strip() == name.strip() and dict['set'] == setName:
-                        # Entry exists, add condition and price to the entry
-                        dict['stock'].append({"condition": condition, "price": price})
-                        added = True
-                        break
-            except:
-                pass
+            # # Check to see if entry already exists in stockList
+            # try:
+            #     for dict in stockList:
+            #         if dict['name'].strip() == name.strip() and dict['set'] == setName:
+            #             # Entry exists, add condition and price to the entry
+            #             dict['stock'].append({"condition": condition, "price": price})
+            #             added = True
+            #             break
+            # except:
+            #     pass
 
-            # If not, add to stockList
-            if not added:
-                results = {
-                    'name': name,
-                    'link': link,
-                    'image': imageUrl,
-                    'set': setName,
-                    'stock': [{"condition": condition, "price": price}],
-                    'website': self.website
-                }
+            # # If not, add to stockList
+            # if not added:
+            #     results = {
+            #         'name': name,
+            #         'link': link,
+            #         'image': imageUrl,
+            #         'set': setName,
+            #         'stock': [{"condition": condition, "price": price}],
+            #         'website': self.website
+            #     }
 
-            stockList.append(results)
+            # stockList.append(results)
+            self.results.append({
+                'name': name,
+                'link': link,
+                'image': imageUrl,
+                'set': setName,
+                'price': price,
+                'condition': condition,
+                'website': self.website,
+                'foil': foil
+            })
+
   
-        self.results = stockList

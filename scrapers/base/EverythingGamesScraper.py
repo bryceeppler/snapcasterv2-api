@@ -134,4 +134,3 @@ class EverythingGamesScraper(Scraper):
                     'website': self.website
                 })
 
-        return self.results
