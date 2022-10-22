@@ -45,23 +45,10 @@ class HouseOfCardsScraper(Scraper):
             if not self.compareCardNames(self.cardName, checkName):
                 continue
 
-            # For this card variant, get the stock
-            variantStockList = []
-            variantConditions = productCardLower.select('li.productChip')
-            for c in variantConditions:
-                if c['data-variantavailable'] == 'true':
-                    condition = c.getText().strip()
-                    price = float(c['data-variantprice']) / 100
-                    variantStockList.append({"condition": condition, "price": price})
-
-
-            # if stockList is empty, continue
-            if not variantStockList:
-                continue
 
             # <a> tag has href pointing to card's page and inner text is the card's name
             tag = productCardLower.select_one('a')
-            name = tag.getText()
+            name = tag.getText().replace("(Borderless)", "").rstrip()
             baseUrl = 'https://houseofcards.ca'
             link =  baseUrl + tag.get('href')
 
@@ -73,15 +60,26 @@ class HouseOfCardsScraper(Scraper):
             setName = productCardLower.select_one('p.productCard__setName').getText()
 
 
-            results = {
-                'name': name,
-                'link': link,
-                'image': imageUrl,
-                'set': setName,
-                'stock': variantStockList,
-                'website': self.website
-            }
+            # For this card variant, get the stock
+            variantStockList = []
+            variantConditions = productCardLower.select('li.productChip')
+            for c in variantConditions:
+                if c['data-variantavailable'] == 'true':
+                    foil = False
+                    if ('Foil' in c['data-varianttitle']):
+                        foil = True
 
-            stockList.append(results)
-        self.results = stockList
+                    condition = c.getText().strip()
+                    price = float(c['data-variantprice']) / 100
+                    variantStockList.append({"condition": condition, "price": price})
+                    self.results.append({
+                        "name": name,
+                        "image": imageUrl,
+                        "link": link,
+                        "set": setName,
+                        "condition": condition,
+                        "price": price,
+                        "website": self.website,
+                        "foil": foil
+                    })
 
