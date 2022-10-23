@@ -38,7 +38,6 @@ class FaceToFaceScraper(Scraper):
     #   --data-raw '{"Keyword":"","FacetSelections":{"tab":["Magic"]},"PageNo":1,"ClientGuid":"30c874915d164f71bf6f84f594bf623f","IndexName":"","ClientData":{"VisitorId":""},"query":"(card\\ name.text: \"Ajani\" OR card\\ name\\ 2.text: \"Ajani\")"}' \
     #   --compressed
         
-        print("making the request")
         response = requests.post(self.url, 
             json={
                 "Keyword":"",
@@ -71,48 +70,49 @@ class FaceToFaceScraper(Scraper):
                 "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
             })
         # Load the response
-        print('loading the response')
         data = json.loads(response.text)
 
         for card in data['Results']:
+            try:
+                cardDocument = card['Document']
 
-            cardDocument = card['Document']
-
-            if "Singles" not in cardDocument['product type']:
-                continue
-            if "Available" not in cardDocument['availability']:
-                continue
-
-
-            setName = cardDocument['true set'][0]
-            cardName = cardDocument['card name'][0]
-            image = cardDocument['image'][0]
-            link = cardDocument['url_detail'][0]
-
-
-            for variant in cardDocument['hawk_child_attributes']:
-                if int(variant['child_inventory_level'][0]) <= 0:
+                if "Singles" not in cardDocument['product type']:
                     continue
-                price = float(variant['child_price_retail'][0])
-                foil = False
-                if "Foil" in variant['option_finish']:
-                    foil = True
-                    print("Foiled ---")
-                    print(variant['option_finish'])
+                if "Available" not in cardDocument['availability']:
+                    continue
 
-                condition = variant['option_condition'][0]
 
-                self.results.append({
-                    'name': cardName,
-                    'set': setName,
-                    'price': price,
-                    'foil': foil,
-                    'condition': condition,
-                    'image': image,
-                    'link': link,
-                    'website': self.website
-                })
+                setName = cardDocument['true set'][0]
+                cardName = cardDocument['card name'][0]
+                image = cardDocument['image'][0]
+                link = cardDocument['url_detail'][0]
 
+
+                for variant in cardDocument['hawk_child_attributes']:
+                    if int(variant['child_inventory_level'][0]) <= 0:
+                        continue
+                    price = float(variant['child_price_retail'][0])
+                    foil = False
+                    if "Foil" in variant['option_finish']:
+                        foil = True
+
+                    condition = variant['option_condition'][0]
+
+                    self.results.append({
+                        'name': cardName,
+                        'set': setName,
+                        'price': price,
+                        'foil': foil,
+                        'condition': condition,
+                        'image': image,
+                        'link': link,
+                        'website': self.website
+                    })
+            except Exception as e:
+                print(e)
+                print("Error parsing card")
+                print(card)
+                continue
 
 
         # print("data:")
