@@ -187,7 +187,6 @@ async def search_bulk(request: BulkCardSearch):
         }
         print("appending CardObject for cardName", cardName)
         totalResults.append(cardObject)
-        #  clear the results array
         return
 
     # Run the scrapers for each card in cardNames, then create a CardObject for it
