@@ -89,12 +89,5 @@ class GauntletScraper(Scraper):
                     "website": self.website
                 }
                 # check if identicle cardObj is in self.results
-                print(card)
                 if cardObj not in self.results:
                     self.results.append(cardObj)
-
-                # if (condition, price) not in variantStockList:
-                #     variantStockList.append({"condition": condition, "price": price})
-                #     self.results.append({
-
-                #     })
