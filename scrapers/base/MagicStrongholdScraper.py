@@ -87,36 +87,29 @@ class MagicStrongholdScraper(Scraper):
 
             setName = card['categoryName']
             image = imagePrefix + card['image']
-            
-            print(image)
-            
-            
-            # https://conduct-catalog-images.s3-us-west-2.amazonaws.com/small/magic_singles/c19/571bc9eb-8d13-4008-86b5-2e348a326d58_1568003533.jpg
 
-        
+            for variant in card['variants']:
+                if variant['quantity'] <= 0:
+                    continue
+                price = variant['price']
+                condition = variant['name']
 
-   
-        # if condition == "Lightly":
-        #     condition = "LP"
-        # elif condition == "Near":
-        #     condition = "NM"
-        # elif condition == "Moderately":
-        #     condition = "MP"
-        # elif condition == "Heavily":
-        #     condition = "HP"
-        # elif condition == "Damaged":
-        #     condition = "DMG"
+                if condition == "Lightly Played":
+                    condition = "LP"
+                elif condition == "NM/Mint":
+                    condition = "NM"
+                elif condition == "Moderately Played":
+                    condition = "MP"
+                elif condition == "Sleeve Playable":
+                    condition = "HP"
+                # no DMG condition from what I can tell
 
-
-
-        # self.results.append({
-        #     'name': title,
-        #     'link': link,
-        #     'image': image,
-        #     'set': setName,
-        #     'condition': condition,
-        #     'foil': foil,
-        #     'price': price,
-        #     'website': self.website
-        # })
-
+                self.results.append({
+                    'name': name,
+                    'set': setName,
+                    'foil': foil,
+                    'condition': condition,
+                    'price': price,
+                    'image': image,
+                    'website': self.website
+                })
