@@ -84,6 +84,12 @@ class MagicStrongholdScraper(Scraper):
             # we want to remove the tag from the card name
             if ' - ' in name:
                 name = name.split(' - ')[0]
+            
+            # there can even be more tags like "Card Name (M21)"
+            # we want to remove the tag from the card name
+            if ' (' in name:
+                name = name.split(' (')[0]
+                
 
             setName = card['categoryName']
             image = imagePrefix + card['image']
