@@ -20,6 +20,10 @@ class SingleCardSearch(BaseModel):
     cardName: str
     websites: list
 
+class BulkCardSearch(BaseModel):
+    cardNames: list
+    websites: list
+    worstCondition: str
 
 app = FastAPI()
 
@@ -103,34 +107,93 @@ async def search_single(request: SingleCardSearch):
     # ]
 
     # Run scrapers in parallel
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
         threadResults = executor.map(transform, scrapers)
 
-    # Right now we have asublist on each card edition of the stock and price
-    # for each condition, but we want one list entry for each condition
-
-    # We will need to refactor the scrapers in the future and we can remove this 
-    # refomatting step
-
-    # Join all results into one list
-    # Each entry must have a unique id
-    # joinedResults = []
-    # for result in results:
-    #     for entry in result:
-    #         for stock in entry["stock"]:
-    #             joinedResults.append({
-    #                 "name": entry["name"],
-    #                 "set": entry["set"],
-    #                 "image": entry["image"],
-    #                 "link": entry["link"],
-    #                 "website": entry["website"],
-    #                 "condition": stock["condition"],
-    #                 "price": stock["price"],
-    #                 "id": len(joinedResults) + 1
-    #             })
-
-    # join all lists into one list
-
-
     return results
+    
+@app.post("/search/bulk/")
+async def search_bulk(request: BulkCardSearch):
+    """
+    Search for a list of cards and return all prices across the provided websites
+    """
+    # CardObject = {
+    #    "cardName": "cardName",
+    #   "variants": []
+    # }
+
+    # For each card in the list, we want to run the single card search
+    # then we want to return an array of cardObjects
+
+    cardNames = request.cardNames
+    websites = request.websites
+    worstCondition = request.worstCondition
+    
+    # List to store results from all threads
+    totalResults = []
+    results = {}
+
+    # Scraper function
+    def transform(scraper):
+        scraper.scrape()
+        scraperResults = scraper.getResults()
+        for result in scraperResults:
+            print("result: ", result['name'])
+            if result['name'] in results:
+                results[result['name']].append(result)
+            else:
+                results[result['name']] = [result]
+
+        return
+
+    def executeScrapers(cardName):
+        # For each card 
+        # Arrange scrapers
+        houseOfCardsScraper = HouseOfCardsScraper(cardName)
+        gauntletScraper = GauntletScraper(cardName)
+        kanatacgScraper = KanatacgScraper(cardName)
+        fusionScraper = FusionScraper(cardName)
+        four01Scraper = Four01Scraper(cardName)
+        everythingGamesScraper = EverythingGamesScraper(cardName)
+        magicStrongholdScraper = MagicStrongholdScraper(cardName)
+        faceToFaceScraper = FaceToFaceScraper(cardName)
+
+        # Map scrapers to an identifier keyword
+        scraperMap = {
+            "houseofcards": houseOfCardsScraper,
+            "gauntlet": gauntletScraper,
+            "kanatacg": kanatacgScraper,
+            "fusion": fusionScraper,
+            "four01": four01Scraper,
+            "everythinggames": everythingGamesScraper,
+            "magicstronghold": magicStrongholdScraper,
+            "facetoface": faceToFaceScraper,
+        }
+
+        # Filter out scrapers that are not requested in request.websites
+        try:
+            scrapers = [scraperMap[website] for website in websites]
+        except KeyError:
+            return {"error": "Invalid website provided"}
+        
+        # Run scrapers in parallel
+        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+            threadResults = executor.map(transform, scrapers)
+
+        # Create a CardObject for the card
+        cardObject = {
+            "cardName": cardName,
+            "variants": results[cardName]
+        }
+        print("appending CardObject for cardName", cardName)
+        totalResults.append(cardObject)
+        return
+
+    # Run the scrapers for each card in cardNames, then create a CardObject for it
+    # and add it to the results array
+    # for cardName in cardNames:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        threadResults = executor.map(executeScrapers, cardNames)
+
+    return totalResults
 
