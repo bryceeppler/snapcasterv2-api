@@ -52,6 +52,10 @@ class GauntletScraper(Scraper):
                 name = name.replace('- Foil', '').rstrip()
                 foil = True
 
+            # sometimes there are other tags like "Card Name - Borderless"
+            # remove em
+            if '-' in name:
+                name = name.split('-')[0].rstrip()
             
             # For this card variant, get the stock
             # variantStockList = []
