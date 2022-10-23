@@ -82,7 +82,7 @@ class GauntletScraper(Scraper):
                     "name": name,
                     "image": imageUrl,
                     "link": link,
-                    "setName": setName,
+                    "set": setName,
                     "foil": foil,
                     "condition": condition,
                     "price": price,
