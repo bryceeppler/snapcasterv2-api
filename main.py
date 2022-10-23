@@ -10,6 +10,7 @@ from scrapers.base.FusionScraper import FusionScraper
 from scrapers.base.KanatacgScraper import KanatacgScraper
 from scrapers.base.HouseOfCardsScraper import HouseOfCardsScraper
 from scrapers.base.EverythingGamesScraper import EverythingGamesScraper
+from scrapers.base.MagicStrongholdScraper import MagicStrongholdScraper
 
 # Pydantic Models
 
@@ -68,6 +69,7 @@ async def search_single(request: SingleCardSearch):
     fusionScraper = FusionScraper(request.cardName)
     four01Scraper = Four01Scraper(request.cardName)
     everythingGamesScraper = EverythingGamesScraper(request.cardName)
+    magicStrongholdScraper = MagicStrongholdScraper(request.cardName)
 
 
     # Map scrapers to an identifier keyword
@@ -78,12 +80,16 @@ async def search_single(request: SingleCardSearch):
         "fusion": fusionScraper,
         "four01": four01Scraper,
         "everythinggames": everythingGamesScraper,
+        "magicstronghold": magicStrongholdScraper,
     }
 
     print("request.websites", request.websites)
 
     # Filter out scrapers that are not requested in request.websites
-    scrapers = [scraperMap[scraper] for scraper in request.websites]
+    try:
+        scrapers = [scraperMap[website] for website in request.websites]
+    except KeyError:
+        return {"error": "Invalid website provided"}
     
     # scrapers = [
     #     everythingGamesScraper,
