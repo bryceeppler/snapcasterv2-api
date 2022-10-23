@@ -11,6 +11,7 @@ from scrapers.base.KanatacgScraper import KanatacgScraper
 from scrapers.base.HouseOfCardsScraper import HouseOfCardsScraper
 from scrapers.base.EverythingGamesScraper import EverythingGamesScraper
 from scrapers.base.MagicStrongholdScraper import MagicStrongholdScraper
+from scrapers.base.FaceToFaceScraper import FaceToFaceScraper
 
 # Pydantic Models
 
@@ -70,6 +71,7 @@ async def search_single(request: SingleCardSearch):
     four01Scraper = Four01Scraper(request.cardName)
     everythingGamesScraper = EverythingGamesScraper(request.cardName)
     magicStrongholdScraper = MagicStrongholdScraper(request.cardName)
+    faceToFaceScraper = FaceToFaceScraper(request.cardName)
 
 
     # Map scrapers to an identifier keyword
@@ -81,6 +83,7 @@ async def search_single(request: SingleCardSearch):
         "four01": four01Scraper,
         "everythinggames": everythingGamesScraper,
         "magicstronghold": magicStrongholdScraper,
+        "facetoface": faceToFaceScraper,
     }
 
     print("request.websites", request.websites)
