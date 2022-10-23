@@ -88,11 +88,18 @@ class MagicStrongholdScraper(Scraper):
             setName = card['categoryName']
             image = imagePrefix + card['image']
 
+            print('name: ' + name)
+            print('setName: ' + setName)
+
             for variant in card['variants']:
                 if variant['quantity'] <= 0:
                     continue
+
+                print("found a card with qty > 0")
                 price = variant['price']
                 condition = variant['name']
+
+                print("price " + str(price))
 
                 if condition == "Lightly Played":
                     condition = "LP"
@@ -103,7 +110,25 @@ class MagicStrongholdScraper(Scraper):
                 elif condition == "Sleeve Playable":
                     condition = "HP"
                 # no DMG condition from what I can tell
+                print("condition after: " + condition)
+                # we want the link to look like this
+                # "{self.siteUrl}/store/category/{categoryName}/item/{inventoryID}/{inventoryName}"
+                # We also need to replace spaces with '_' in each of the variables
+                
 
+                # construct link to card
+                categoryName = card['categoryName'].replace(' ', '%20')
+                inventoryID = str(card['inventoryID'])
+                inventoryName = card['inventoryName'].replace(' ', '_')
+
+
+                
+
+
+
+                link = f"{self.siteUrl}/store/category/{categoryName}/item/{inventoryID}/{inventoryName}"
+                print("link: " + link)
+                print("about to append")
                 self.results.append({
                     'name': name,
                     'set': setName,
@@ -111,5 +136,6 @@ class MagicStrongholdScraper(Scraper):
                     'condition': condition,
                     'price': price,
                     'image': image,
+                    'link': link,
                     'website': self.website
                 })
