@@ -64,6 +64,10 @@ class HouseOfCardsScraper(Scraper):
             # set name
             setName = productCardLower.select_one('p.productCard__setName').getText()
 
+            # sometimes the set name has "Extended" at the end, remove it
+            if 'Extended' in setName:
+                setName = setName.split('Extended')[0].strip()
+
 
             # For this card variant, get the stock
             variantStockList = []
