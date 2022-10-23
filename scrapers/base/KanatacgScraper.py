@@ -59,6 +59,11 @@ class KanatacgScraper(Scraper):
             imageUrl = card.select_one('td a')['href']
             setName = card.select('td')[1].select_one('small').getText()
 
+            # sometimes there is a " - Borderless" tag in the set name
+            # we want to remove it
+            if " - " in setName:
+                setName = setName.split(" - ")[0]
+
             # For this card variant, get the stock
             variantStockList = []
             variantConditions = card.select('tr.variantRow')
