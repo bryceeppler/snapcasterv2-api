@@ -54,7 +54,7 @@ class GauntletScraper(Scraper):
 
             
             # For this card variant, get the stock
-            variantStockList = []
+            # variantStockList = []
             variantConditions = card.select('div.variant-row')
 
             # For each item, get the condition and price
@@ -77,15 +77,24 @@ class GauntletScraper(Scraper):
                 price = float(c.select_one('form.add-to-cart-form')['data-price'].replace('CAD$ ', ''))
 
                 # Verify condition and price are not duplicates
-                if (condition, price) not in variantStockList:
-                    variantStockList.append({"condition": condition, "price": price})
-                    self.results.append({
-                        "name": name,
-                        "image": imageUrl,
-                        "link": link,
-                        "setName": setName,
-                        "foil": foil,
-                        "condition": condition,
-                        "price": price,
-                        "website": self.website
-                    })
+                print("condition, price: ", condition, price)
+                cardObj = {
+                    "name": name,
+                    "image": imageUrl,
+                    "link": link,
+                    "setName": setName,
+                    "foil": foil,
+                    "condition": condition,
+                    "price": price,
+                    "website": self.website
+                }
+                # check if identicle cardObj is in self.results
+                print(card)
+                if cardObj not in self.results:
+                    self.results.append(cardObj)
+
+                # if (condition, price) not in variantStockList:
+                #     variantStockList.append({"condition": condition, "price": price})
+                #     self.results.append({
+
+                #     })
