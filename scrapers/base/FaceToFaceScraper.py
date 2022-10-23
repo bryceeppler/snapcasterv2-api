@@ -74,5 +74,46 @@ class FaceToFaceScraper(Scraper):
         print('loading the response')
         data = json.loads(response.text)
 
-        print("data:")
-        print(data)
+        for card in data['Results']:
+
+            cardDocument = card['Document']
+
+            if "Singles" not in cardDocument['product type']:
+                continue
+            if "Available" not in cardDocument['availability']:
+                continue
+
+
+            setName = cardDocument['true set'][0]
+            cardName = cardDocument['card name'][0]
+            image = cardDocument['image'][0]
+            link = cardDocument['url_detail'][0]
+
+
+            for variant in cardDocument['hawk_child_attributes']:
+                if int(variant['child_inventory_level'][0]) <= 0:
+                    continue
+                price = float(variant['child_price_retail'][0])
+                foil = False
+                if "Foil" in variant['option_finish']:
+                    foil = True
+                    print("Foiled ---")
+                    print(variant['option_finish'])
+
+                condition = variant['option_condition'][0]
+
+                self.results.append({
+                    'name': cardName,
+                    'set': setName,
+                    'price': price,
+                    'foil': foil,
+                    'condition': condition,
+                    'image': image,
+                    'link': link,
+                    'website': self.website
+                })
+
+
+
+        # print("data:")
+        # print(data)
