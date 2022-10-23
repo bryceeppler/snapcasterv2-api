@@ -107,7 +107,7 @@ async def search_single(request: SingleCardSearch):
     # ]
 
     # Run scrapers in parallel
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
         threadResults = executor.map(transform, scrapers)
 
     return results
@@ -128,39 +128,73 @@ async def search_bulk(request: BulkCardSearch):
     cardNames = request.cardNames
     websites = request.websites
     worstCondition = request.worstCondition
-
+    
     # List to store results from all threads
-    results = []
+    totalResults = []
+    results = {}
 
     # Scraper function
     def transform(scraper):
         scraper.scrape()
         scraperResults = scraper.getResults()
         for result in scraperResults:
-            results.append(result)
+            print("result: ", result['name'])
+            if result['name'] in results:
+                results[result['name']].append(result)
+            else:
+                results[result['name']] = [result]
+
         return
 
-    # Arrange scrapers
-    houseOfCardsScraper = HouseOfCardsScraper(cardNames)
-    gauntletScraper = GauntletScraper(cardNames)
-    kanatacgScraper = KanatacgScraper(cardNames)
-    fusionScraper = FusionScraper(cardNames)
-    four01Scraper = Four01Scraper(cardNames)
-    everythingGamesScraper = EverythingGamesScraper(cardNames)
-    magicStrongholdScraper = MagicStrongholdScraper(cardNames)
-    faceToFaceScraper = FaceToFaceScraper(cardNames)
+    def executeScrapers(cardName):
+        # For each card 
+        # Arrange scrapers
+        houseOfCardsScraper = HouseOfCardsScraper(cardName)
+        gauntletScraper = GauntletScraper(cardName)
+        kanatacgScraper = KanatacgScraper(cardName)
+        fusionScraper = FusionScraper(cardName)
+        four01Scraper = Four01Scraper(cardName)
+        everythingGamesScraper = EverythingGamesScraper(cardName)
+        magicStrongholdScraper = MagicStrongholdScraper(cardName)
+        faceToFaceScraper = FaceToFaceScraper(cardName)
 
-    # Map scrapers to an identifier keyword
-    scraperMap = {
-        "houseofcards": houseOfCardsScraper,
-        "gauntlet": gauntletScraper,
-        "kanatacg": kanatacgScraper,
-        "fusion": fusionScraper,
-        "four01": four01Scraper,
-        "everythinggames": everythingGamesScraper,
-        "magicstronghold": magicStrongholdScraper,
-        "facetoface": faceToFaceScraper,
-    } 
+        # Map scrapers to an identifier keyword
+        scraperMap = {
+            "houseofcards": houseOfCardsScraper,
+            "gauntlet": gauntletScraper,
+            "kanatacg": kanatacgScraper,
+            "fusion": fusionScraper,
+            "four01": four01Scraper,
+            "everythinggames": everythingGamesScraper,
+            "magicstronghold": magicStrongholdScraper,
+            "facetoface": faceToFaceScraper,
+        }
 
-    return {"message": "Hello World"}
+        # Filter out scrapers that are not requested in request.websites
+        try:
+            scrapers = [scraperMap[website] for website in websites]
+        except KeyError:
+            return {"error": "Invalid website provided"}
+        
+        # Run scrapers in parallel
+        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
+            threadResults = executor.map(transform, scrapers)
+
+        # Create a CardObject for the card
+        cardObject = {
+            "cardName": cardName,
+            "variants": results[cardName]
+        }
+        print("appending CardObject for cardName", cardName)
+        totalResults.append(cardObject)
+        #  clear the results array
+        return
+
+    # Run the scrapers for each card in cardNames, then create a CardObject for it
+    # and add it to the results array
+    # for cardName in cardNames:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        threadResults = executor.map(executeScrapers, cardNames)
+
+    return totalResults
 
