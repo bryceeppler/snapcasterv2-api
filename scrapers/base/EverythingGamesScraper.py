@@ -106,6 +106,9 @@ class EverythingGamesScraper(Scraper):
             for variant in card['variants']:
                 # this string contains the condition and foil status
                 # variant['title'] = "Lightly Played Foil"
+                # print the variant as json
+                if(variant['quantity'] <= 0):
+                    continue
 
                 condition = variant['title'].split(" ")[0].strip()
                 # getting the first element here will yield
