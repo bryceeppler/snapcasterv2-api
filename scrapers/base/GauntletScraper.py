@@ -57,7 +57,7 @@ class GauntletScraper(Scraper):
 
             # sometimes there are other tags like "Card Name - Borderless"
             # remove em
-            if '-' in name:
+            if ' - ' in name:
                 name = name.split('-')[0].rstrip()
             
             # For this card variant, get the stock

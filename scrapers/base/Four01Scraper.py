@@ -58,8 +58,8 @@ class Four01Scraper(Scraper):
             name = name.split('(')[0].rstrip()
 
             # there can even be more tags like "Card Name - Borderless", remove em
-            if '-' in name:
-                name = name.split('-')[0].rstrip()
+            if ' - Borderless' in name:
+                name = name.split(' - Borderless')[0].rstrip()
                 
 
             # 401 games has an art series for some of their art card sets

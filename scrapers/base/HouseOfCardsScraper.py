@@ -55,7 +55,8 @@ class HouseOfCardsScraper(Scraper):
             # sometimes there are weird tags in the name like "Card name (Borderless)"
             # remove them
             if '(' in name:
-                name = name.split('(')[0].strip()
+                name = name.split('(')[0]
+            name = name.strip()
                 
             baseUrl = 'https://houseofcards.ca'
             link =  baseUrl + tag.get('href')
