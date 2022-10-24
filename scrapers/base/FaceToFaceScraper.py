@@ -92,14 +92,21 @@ class FaceToFaceScraper(Scraper):
 
 
                 for variant in cardDocument['hawk_child_attributes']:
+                    # print(json.dumps(variant))
                     if int(variant['child_inventory_level'][0]) <= 0:
                         continue
                     price = float(variant['child_price_retail'][0])
                     foil = False
-                    if "Foil" in variant['option_finish']:
-                        foil = True
+                    try:
+                        if "Foil" in variant['option_finish']:
+                            foil = True
+                    except:
+                        pass
 
-                    condition = variant['option_condition'][0]
+                    try:
+                        condition = variant['option_condition'][0]
+                    except:
+                        condition = "SCN"
 
                     self.results.append({
                         'name': cardName,
@@ -112,6 +119,8 @@ class FaceToFaceScraper(Scraper):
                         'website': self.website
                     })
             except Exception as e:
+
                 print(e)
                 print("Error parsing card")
+                print(json.dumps(card))
                 continue
