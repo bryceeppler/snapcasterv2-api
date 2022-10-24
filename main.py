@@ -137,11 +137,8 @@ async def search_bulk(request: BulkCardSearch):
         scraper.scrape()
         scraperResults = scraper.getResults()
         for result in scraperResults:
-            print("result: ", result['name'])
-            # print("results array: ", results)
             if result['name'].lower() in results:
                 results[result['name'].lower()].append(result)
-                print("Card already in results array")
             else:
                 results[result['name'].lower()] = [result]
 
