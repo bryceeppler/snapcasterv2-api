@@ -4,6 +4,9 @@ from .Scraper import Scraper
 
 
 class GauntletScraper(Scraper):
+    """
+    Split cards can be searched using "//" as a split
+    """
     def __init__(self, cardName):
         Scraper.__init__(self, cardName)
         self.baseUrl = 'https://www.gauntletgamesvictoria.ca'
@@ -81,7 +84,6 @@ class GauntletScraper(Scraper):
                 price = float(c.select_one('form.add-to-cart-form')['data-price'].replace('CAD$ ', ''))
 
                 # Verify condition and price are not duplicates
-                print("condition, price: ", condition, price)
                 cardObj = {
                     "name": name,
                     "image": imageUrl,

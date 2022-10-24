@@ -7,10 +7,14 @@ from .Scraper import Scraper
 
 class MagicStrongholdScraper(Scraper):
     """
-    Everything games uses a completely exposed API to get the stock of cards
+    Magic Stronghold uses a completely exposed API to get the stock of cards
     We can literally hit the API and get all the information we need
 
     https://api.conductcommerce.com/v1/advancedSearch
+
+
+    Split cards can be searched using "//" as a split
+
     """
     def __init__(self, cardName):
         Scraper.__init__(self, cardName)
@@ -39,7 +43,6 @@ class MagicStrongholdScraper(Scraper):
         #   --data-raw $'{"productTypeID":1,"name":"elspeth, sun\'s champion","host":"www.magicstronghold.com"}' \
         #   --compressed
         
-        print("making the request")
         response = requests.post(self.url, 
             json={
                 "productTypeID": 1,
@@ -64,7 +67,6 @@ class MagicStrongholdScraper(Scraper):
                 "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
             })
         # Load the response
-        print('loading the response')
         data = json.loads(response.text)
 
         # The image uri prefix
@@ -94,18 +96,13 @@ class MagicStrongholdScraper(Scraper):
             setName = card['categoryName']
             image = imagePrefix + card['image']
 
-            print('name: ' + name)
-            print('setName: ' + setName)
-
             for variant in card['variants']:
                 if variant['quantity'] <= 0:
                     continue
 
-                print("found a card with qty > 0")
                 price = variant['price']
                 condition = variant['name']
 
-                print("price " + str(price))
 
                 if condition == "Lightly Played":
                     condition = "LP"
@@ -116,7 +113,6 @@ class MagicStrongholdScraper(Scraper):
                 elif condition == "Sleeve Playable":
                     condition = "HP"
                 # no DMG condition from what I can tell
-                print("condition after: " + condition)
                 # we want the link to look like this
                 # "{self.siteUrl}/store/category/{categoryName}/item/{inventoryID}/{inventoryName}"
                 # We also need to replace spaces with '_' in each of the variables
@@ -133,8 +129,6 @@ class MagicStrongholdScraper(Scraper):
 
 
                 link = f"{self.siteUrl}/store/category/{categoryName}/item/{inventoryID}/{inventoryName}"
-                print("link: " + link)
-                print("about to append")
                 self.results.append({
                     'name': name,
                     'set': setName,

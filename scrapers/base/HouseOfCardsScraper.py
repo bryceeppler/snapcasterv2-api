@@ -4,6 +4,9 @@ from .Scraper import Scraper
 
 
 class HouseOfCardsScraper(Scraper):
+    """
+    Split cards can be searched using "//" as a split
+    """
     def __init__(self, cardName):
         Scraper.__init__(self, cardName)
         self.baseUrl = 'https://houseofcards.ca'

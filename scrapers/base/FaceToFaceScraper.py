@@ -10,6 +10,9 @@ class FaceToFaceScraper(Scraper):
     Everything games uses a completely exposed API to get the stock of cards
     We can literally hit the API and get all the information we need
 
+    Split cards can be searched using "//" as a split
+
+
     https://essearchapi-na.hawksearch.com/api/v2/search
     """
     def __init__(self, cardName):
@@ -111,9 +114,4 @@ class FaceToFaceScraper(Scraper):
             except Exception as e:
                 print(e)
                 print("Error parsing card")
-                print(card)
                 continue
-
-
-        # print("data:")
-        # print(data)

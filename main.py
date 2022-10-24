@@ -90,7 +90,6 @@ async def search_single(request: SingleCardSearch):
         "facetoface": faceToFaceScraper,
     }
 
-    print("request.websites", request.websites)
 
     # Filter out scrapers that are not requested in request.websites
     try:
@@ -139,10 +138,12 @@ async def search_bulk(request: BulkCardSearch):
         scraperResults = scraper.getResults()
         for result in scraperResults:
             print("result: ", result['name'])
-            if result['name'] in results:
-                results[result['name']].append(result)
+            # print("results array: ", results)
+            if result['name'].lower() in results:
+                results[result['name'].lower()].append(result)
+                print("Card already in results array")
             else:
-                results[result['name']] = [result]
+                results[result['name'].lower()] = [result]
 
         return
 
@@ -182,10 +183,9 @@ async def search_bulk(request: BulkCardSearch):
 
         # Create a CardObject for the card
         cardObject = {
-            "cardName": cardName,
-            "variants": results[cardName]
+            "cardName": cardName.lower(),
+            "variants": results[cardName.lower()]
         }
-        print("appending CardObject for cardName", cardName)
         totalResults.append(cardObject)
         return
 

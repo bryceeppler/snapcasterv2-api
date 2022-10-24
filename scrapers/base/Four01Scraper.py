@@ -7,6 +7,10 @@ from .Scraper import Scraper
 # is nice
 
 class Four01Scraper(Scraper):
+    """
+    Split cards can be searched using "//" as a split
+
+    """
     def __init__(self, cardName):
         Scraper.__init__(self, cardName)
         self.siteUrl = 'https://store.401games.ca'
