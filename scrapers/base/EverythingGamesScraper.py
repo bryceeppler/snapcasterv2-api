@@ -43,7 +43,7 @@ class EverythingGamesScraper(Scraper):
         #   --compressed
         
         # make the card name url friendly
-        cardName = self.cardName.replace('"', '%22').replace("'", "%27")
+        cardName = self.cardName.replace('"', '%22')
         
         response = requests.post(self.url, 
             json={
