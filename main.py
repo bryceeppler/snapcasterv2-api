@@ -1,3 +1,4 @@
+from numpy import array2string
 from fastapi import FastAPI
 from pydantic import BaseModel
 import concurrent.futures
@@ -116,7 +117,8 @@ async def search_single(request: SingleCardSearch):
 
     # Create a new search object
     # post a log to the database
-    log = Search(query=request.cardName, websites=','.join(request.websites), queryType="single", results="", timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    numResults = len(results)
+    log = Search(query=request.cardName, websites=','.join(request.websites), queryType="single", results="", numResults=numResults, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     SQLModel.metadata.create_all(engine)
     session = Session(engine)
     session.add(log)
@@ -207,7 +209,12 @@ async def search_bulk(request: BulkCardSearch):
         threadResults = executor.map(executeScrapers, cardNames)
 
     # post a log to the database
-    log = Search(query=','.join(request.cardNames), websites=','.join(request.websites), queryType="multi", results="", timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    # numResults = the length of the variant array in all card objects
+    numResults = 0
+    for card in totalResults:
+        numResults += len(card['variants'])
+
+    log = Search(query=','.join(request.cardNames), websites=','.join(request.websites), queryType="multi", results="", numResults=numResults, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     SQLModel.metadata.create_all(engine)
     session = Session(engine)
     session.add(log)

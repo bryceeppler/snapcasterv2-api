@@ -7,5 +7,6 @@ class Search(SQLModel, table=True):
     websites: str
     queryType: str
     results: str
+    numResults: int
     timestamp: str
 
