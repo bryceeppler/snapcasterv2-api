@@ -1,4 +1,3 @@
-from numpy import array2string
 from fastapi import FastAPI
 from pydantic import BaseModel
 import concurrent.futures
