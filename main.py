@@ -12,7 +12,8 @@ from scrapers.base.HouseOfCardsScraper import HouseOfCardsScraper
 from scrapers.base.EverythingGamesScraper import EverythingGamesScraper
 from scrapers.base.MagicStrongholdScraper import MagicStrongholdScraper
 from scrapers.base.FaceToFaceScraper import FaceToFaceScraper
-
+from db.database import engine, SQLModel, Session
+from db.models import Search
 # Pydantic Models
 
 
@@ -194,3 +195,12 @@ async def search_bulk(request: BulkCardSearch):
 
     return totalResults
 
+# log search queries in database
+@app.post("/log/")
+async def log(request: Search):
+    SQLModel.metadata.create_all(engine)
+    session = Session(engine)
+    session.add(request)
+    session.commit()
+    session.close()
+    return {"message": "Logged"}
