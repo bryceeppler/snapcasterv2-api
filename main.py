@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import concurrent.futures
 from fastapi.middleware.cors import CORSMiddleware
+# import datetime
+from datetime import datetime
 
 # Scrapers
 from scrapers.base.GauntletScraper import GauntletScraper
@@ -14,6 +16,8 @@ from scrapers.base.MagicStrongholdScraper import MagicStrongholdScraper
 from scrapers.base.FaceToFaceScraper import FaceToFaceScraper
 from db.database import engine, SQLModel, Session
 from db.models import Search
+
+
 # Pydantic Models
 
 
@@ -110,6 +114,15 @@ async def search_single(request: SingleCardSearch):
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
         threadResults = executor.map(transform, scrapers)
 
+    # Create a new search object
+    # post a log to the database
+    log = Search(query=request.cardName, websites=','.join(request.websites), queryType="single", results="", timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    SQLModel.metadata.create_all(engine)
+    session = Session(engine)
+    session.add(log)
+    session.commit()
+    session.close()
+
     return results
     
 @app.post("/search/bulk/")
@@ -192,6 +205,14 @@ async def search_bulk(request: BulkCardSearch):
     # for cardName in cardNames:
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
         threadResults = executor.map(executeScrapers, cardNames)
+
+    # post a log to the database
+    log = Search(query=','.join(request.cardNames), websites=','.join(request.websites), queryType="multi", results="", timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    SQLModel.metadata.create_all(engine)
+    session = Session(engine)
+    session.add(log)
+    session.commit()
+    session.close()
 
     return totalResults
 
