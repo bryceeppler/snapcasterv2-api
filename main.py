@@ -14,6 +14,7 @@ from scrapers.base.HouseOfCardsScraper import HouseOfCardsScraper
 from scrapers.base.EverythingGamesScraper import EverythingGamesScraper
 from scrapers.base.MagicStrongholdScraper import MagicStrongholdScraper
 from scrapers.base.FaceToFaceScraper import FaceToFaceScraper
+from scrapers.base.ConnectionGamesScraper import ConnectionGamesScraper
 from db.database import engine, SQLModel, Session
 from db.models import Search
 
@@ -81,6 +82,7 @@ async def search_single(request: SingleCardSearch):
     everythingGamesScraper = EverythingGamesScraper(request.cardName)
     magicStrongholdScraper = MagicStrongholdScraper(request.cardName)
     faceToFaceScraper = FaceToFaceScraper(request.cardName)
+    connectionGamesScraper = ConnectionGamesScraper(request.cardName)
 
 
     # Map scrapers to an identifier keyword
@@ -93,6 +95,7 @@ async def search_single(request: SingleCardSearch):
         "everythinggames": everythingGamesScraper,
         "magicstronghold": magicStrongholdScraper,
         "facetoface": faceToFaceScraper,
+        "connectiongames": connectionGamesScraper,
     }
 
 
@@ -103,11 +106,7 @@ async def search_single(request: SingleCardSearch):
         return {"error": "Invalid website provided"}
     
     # scrapers = [
-    #     everythingGamesScraper,
-    #     four01Scraper,
-    #     fusionScraper,
-    #     kanatacgScraper,
-    #     gauntletScraper,      
+    #     connectionGamesScraper      
     # ]
 
     # Run scrapers in parallel
