@@ -169,6 +169,7 @@ async def search_bulk(request: BulkCardSearch):
         everythingGamesScraper = EverythingGamesScraper(cardName)
         magicStrongholdScraper = MagicStrongholdScraper(cardName)
         faceToFaceScraper = FaceToFaceScraper(cardName)
+        connectionGamesScraper = ConnectionGamesScraper(cardName)
 
         # Map scrapers to an identifier keyword
         scraperMap = {
@@ -180,6 +181,7 @@ async def search_bulk(request: BulkCardSearch):
             "everythinggames": everythingGamesScraper,
             "magicstronghold": magicStrongholdScraper,
             "facetoface": faceToFaceScraper,
+            "connectiongames": connectionGamesScraper,
         }
 
         # Filter out scrapers that are not requested in request.websites
