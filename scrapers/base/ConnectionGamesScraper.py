@@ -53,5 +53,27 @@ class ConnectionGamesScraper(Scraper):
             return None
         
         for result in results:
+            name = result.select_one('div.meta h4.name').getText()
+            # foil status is in the name as - Foil, same with Borderless
+            foil = False
+            borderless = False
+            if ' - Foil' in name:
+                foil = True
+                name = name.replace(' - Foil', '')
+            if ' - Borderless' in name:
+                borderless = True
+                name = name.replace(' - Borderless', '')
+
+            # get the href from the a tag with an itemprop="url" attribute
+            link = self.baseUrl + result.select_one('a[itemprop="url"]')['href']
+
+            # get the set from div.meta span.category
+            setName = result.select_one('div.meta span.category').getText()
+
+            # get the image src from inside from the div with image class
+            image = result.select_one('div.image img')['src']
+
+
+            # TODO
+            # need to do this for each variant
             condition = result.select_one('span.variant-short-info').getText()
-            print(condition)
