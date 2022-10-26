@@ -100,14 +100,14 @@ async def search_single(request: SingleCardSearch):
 
 
     # Filter out scrapers that are not requested in request.websites
-    # try:
-    #     scrapers = [scraperMap[website] for website in request.websites]
-    # except KeyError:
-    #     return {"error": "Invalid website provided"}
+    try:
+        scrapers = [scraperMap[website] for website in request.websites]
+    except KeyError:
+        return {"error": "Invalid website provided"}
     
-    scrapers = [
-        connectionGamesScraper      
-    ]
+    # scrapers = [
+    #     connectionGamesScraper      
+    # ]
 
     # Run scrapers in parallel
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:

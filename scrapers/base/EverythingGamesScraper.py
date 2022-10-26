@@ -1,4 +1,3 @@
-from unittest import result
 from bs4 import BeautifulSoup
 import requests
 import json

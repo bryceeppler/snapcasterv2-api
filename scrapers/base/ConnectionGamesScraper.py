@@ -45,7 +45,7 @@ class ConnectionGamesScraper(Scraper):
 
     def scrape(self):
         page = requests.get(self.url)
-
+    
         soup = BeautifulSoup(page.content, 'html.parser')
         results = soup.find_all('li', class_='product')
 
@@ -64,11 +64,32 @@ class ConnectionGamesScraper(Scraper):
                 borderless = True
                 name = name.replace(' - Borderless', '')
 
+            if ' - ' in name:
+                # split card
+                name = name.split(' - ')[0]
+
+            if self.cardName.lower() not in name.lower():
+                continue
+
+
             # get the href from the a tag with an itemprop="url" attribute
             link = self.baseUrl + result.select_one('a[itemprop="url"]')['href']
+            if 'magic_singles' not in link:
+                # not a magic card
+                continue
 
             # get the set from div.meta span.category
             setName = result.select_one('div.meta span.category').getText()
+
+            # weird thing where they have tournament legality in setName
+            if ' (Not Tournament Legal)' in setName:
+                setName = setName.replace(' (Not Tournament Legal)', '')
+
+            # remove any other tags we dont want
+            if ' - ' in setName:
+                setName = setName.split(' - ')[0]
+
+
 
             # get the image src from inside from the div with image class
             image = result.select_one('div.image img')['src']
@@ -76,4 +97,31 @@ class ConnectionGamesScraper(Scraper):
 
             # TODO
             # need to do this for each variant
-            condition = result.select_one('span.variant-short-info').getText()
+            for variant in result.select('div.variants div.variant-row'):
+                condition = variant.select_one('span.variant-short-info').getText()
+                if 'NM' in condition:
+                    condition = 'NM'
+                elif 'Light' in condition:
+                    condition = 'LP'
+                elif 'Moderate' in condition:
+                    condition = 'MP'
+                elif 'Heav' in condition:
+                    condition = 'HP'
+                elif "dmg" or "dam" in condition.lower():
+                    condition = 'DMG'
+
+                # price comes from the span with class = "regular price"
+                price = variant.select_one('span.regular.price').getText().replace('CAD$ ', '')
+
+                card = {
+                    'name': name,
+                    'set': setName,
+                    'condition': condition,
+                    'price': price,
+                    'link': link,
+                    'image': image,
+                    'foil': foil,
+                    'website': self.website
+                }
+
+                self.results.append(card)
