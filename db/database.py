@@ -17,4 +17,4 @@ pg_db = os.getenv('PG_DB')
 
 pg_url = f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_db}"
 
-engine = create_engine(pg_url, echo=True)
+engine = create_engine(pg_url, echo=False)

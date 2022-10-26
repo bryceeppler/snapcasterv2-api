@@ -14,6 +14,7 @@ from scrapers.base.HouseOfCardsScraper import HouseOfCardsScraper
 from scrapers.base.EverythingGamesScraper import EverythingGamesScraper
 from scrapers.base.MagicStrongholdScraper import MagicStrongholdScraper
 from scrapers.base.FaceToFaceScraper import FaceToFaceScraper
+from scrapers.base.ConnectionGamesScraper import ConnectionGamesScraper
 from db.database import engine, SQLModel, Session
 from db.models import Search
 
@@ -81,6 +82,7 @@ async def search_single(request: SingleCardSearch):
     everythingGamesScraper = EverythingGamesScraper(request.cardName)
     magicStrongholdScraper = MagicStrongholdScraper(request.cardName)
     faceToFaceScraper = FaceToFaceScraper(request.cardName)
+    connectionGamesScraper = ConnectionGamesScraper(request.cardName)
 
 
     # Map scrapers to an identifier keyword
@@ -93,22 +95,19 @@ async def search_single(request: SingleCardSearch):
         "everythinggames": everythingGamesScraper,
         "magicstronghold": magicStrongholdScraper,
         "facetoface": faceToFaceScraper,
+        "connectiongames": connectionGamesScraper,
     }
 
 
     # Filter out scrapers that are not requested in request.websites
-    try:
-        scrapers = [scraperMap[website] for website in request.websites]
-    except KeyError:
-        return {"error": "Invalid website provided"}
+    # try:
+    #     scrapers = [scraperMap[website] for website in request.websites]
+    # except KeyError:
+    #     return {"error": "Invalid website provided"}
     
-    # scrapers = [
-    #     everythingGamesScraper,
-    #     four01Scraper,
-    #     fusionScraper,
-    #     kanatacgScraper,
-    #     gauntletScraper,      
-    # ]
+    scrapers = [
+        connectionGamesScraper      
+    ]
 
     # Run scrapers in parallel
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
