@@ -87,6 +87,8 @@ class FaceToFaceScraper(Scraper):
 
                 setName = cardDocument['true set'][0]
                 cardName = cardDocument['card name'][0]
+                if "Art Card" in cardName:
+                    continue
                 image = cardDocument['image'][0]
                 link = cardDocument['url_detail'][0]
 
