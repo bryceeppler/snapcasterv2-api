@@ -94,16 +94,18 @@ class TopDeckHeroScraper(Scraper):
             # need to do this for each variant
             for variant in result.select('div.variants div.variant-row'):
                 condition = variant.select_one('span.variant-short-info').getText()
-                if 'NM' in condition:
+                if 'Mint' in condition:
                     condition = 'NM'
-                elif 'Light' in condition:
+                elif 'Slight' in condition:
                     condition = 'LP'
-                elif 'Moderate' in condition:
+                elif 'Moderat' in condition:
                     condition = 'MP'
                 elif 'Heav' in condition:
                     condition = 'HP'
-                elif "dmg" or "dam" in condition.lower():
+                elif "Damag" in condition:
                     condition = 'DMG'
+                elif "Hero" in condition:
+                    condition = 'LP'
 
                 # price comes from the span with class = "regular price"
                 price = variant.select_one('span.regular.price').getText().replace('CAD$ ', '')
