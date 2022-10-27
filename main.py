@@ -15,6 +15,7 @@ from scrapers.base.EverythingGamesScraper import EverythingGamesScraper
 from scrapers.base.MagicStrongholdScraper import MagicStrongholdScraper
 from scrapers.base.FaceToFaceScraper import FaceToFaceScraper
 from scrapers.base.ConnectionGamesScraper import ConnectionGamesScraper
+from scrapers.base.TopDeckHeroScraper import TopDeckHeroScraper
 from db.database import engine, SQLModel, Session
 from db.models import Search
 
@@ -83,6 +84,8 @@ async def search_single(request: SingleCardSearch):
     magicStrongholdScraper = MagicStrongholdScraper(request.cardName)
     faceToFaceScraper = FaceToFaceScraper(request.cardName)
     connectionGamesScraper = ConnectionGamesScraper(request.cardName)
+    topDeckHeroScraper = TopDeckHeroScraper(request.cardName)
+
 
 
     # Map scrapers to an identifier keyword
@@ -96,6 +99,7 @@ async def search_single(request: SingleCardSearch):
         "magicstronghold": magicStrongholdScraper,
         "facetoface": faceToFaceScraper,
         "connectiongames": connectionGamesScraper,
+        "topdeckhero": topDeckHeroScraper,
     }
 
 
@@ -170,6 +174,7 @@ async def search_bulk(request: BulkCardSearch):
         magicStrongholdScraper = MagicStrongholdScraper(cardName)
         faceToFaceScraper = FaceToFaceScraper(cardName)
         connectionGamesScraper = ConnectionGamesScraper(cardName)
+        topDeckHeroScraper = TopDeckHeroScraper(cardName)
 
         # Map scrapers to an identifier keyword
         scraperMap = {
@@ -182,6 +187,7 @@ async def search_bulk(request: BulkCardSearch):
             "magicstronghold": magicStrongholdScraper,
             "facetoface": faceToFaceScraper,
             "connectiongames": connectionGamesScraper,
+            'topdeckhero': topDeckHeroScraper,
         }
 
         # Filter out scrapers that are not requested in request.websites
