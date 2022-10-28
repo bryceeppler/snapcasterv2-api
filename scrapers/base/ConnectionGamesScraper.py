@@ -117,7 +117,7 @@ class ConnectionGamesScraper(Scraper):
                     'name': name,
                     'set': setName,
                     'condition': condition,
-                    'price': price,
+                    'price': float(price),
                     'link': link,
                     'image': image,
                     'foil': foil,
