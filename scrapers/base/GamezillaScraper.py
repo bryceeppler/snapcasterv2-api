@@ -72,7 +72,9 @@ class GamezillaScraper(Scraper):
 
                 price = float(conditionAndPrice.split('(')[1].replace("$", "").split(')')[0].strip())
 
-                self.results.append({
+                # Since gamezilla has multiple stores, they could have multiple cards with same condition and set
+                # We need to check if an identical card already exists in the list
+                cardToAdd = {
                     'name': cardName,
                     'image': image,
                     'link': link,
@@ -81,4 +83,8 @@ class GamezillaScraper(Scraper):
                     'condition': condition,
                     'price': price,
                     'website': self.website
-                })
+                }
+
+                if cardToAdd not in self.results:
+                    self.results.append(cardToAdd)
+            
