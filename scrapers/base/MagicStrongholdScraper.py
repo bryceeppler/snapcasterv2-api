@@ -70,6 +70,7 @@ class MagicStrongholdScraper(Scraper):
         data = json.loads(response.text)
 
         # The image uri prefix
+        # Cards that are high value and have scanned images will not use this image prefix.
         imagePrefix = 'https://conduct-catalog-images.s3-us-west-2.amazonaws.com/small/'
         
         # iterate over each card
@@ -94,7 +95,15 @@ class MagicStrongholdScraper(Scraper):
                 
 
             setName = card['categoryName']
-            image = imagePrefix + card['image']
+
+            # we need to check if the card image is a scanned image or not
+            # scanned images are hosted at magicstronghold-images.s3.amazonaws.com/inventory
+            # and have do not use the imagePrefix
+
+            if 'magicstronghold-images.s3.amazonaws.com' in card['image']:
+                image = card['image']
+            else:
+                image = imagePrefix + card['image']
 
             for variant in card['variants']:
                 if variant['quantity'] <= 0:
@@ -102,7 +111,6 @@ class MagicStrongholdScraper(Scraper):
 
                 price = variant['price']
                 condition = variant['name']
-
 
                 if condition == "Lightly Played":
                     condition = "LP"
@@ -113,20 +121,11 @@ class MagicStrongholdScraper(Scraper):
                 elif condition == "Sleeve Playable":
                     condition = "HP"
                 # no DMG condition from what I can tell
-                # we want the link to look like this
-                # "{self.siteUrl}/store/category/{categoryName}/item/{inventoryID}/{inventoryName}"
-                # We also need to replace spaces with '_' in each of the variables
-                
 
                 # construct link to card
                 categoryName = card['categoryName'].replace(' ', '%20')
                 inventoryID = str(card['inventoryID'])
                 inventoryName = card['inventoryName'].replace(' ', '_')
-
-
-                
-
-
 
                 link = f"{self.siteUrl}/store/category/{categoryName}/item/{inventoryID}/{inventoryName}"
                 self.results.append({
