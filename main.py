@@ -21,6 +21,7 @@ from scrapers.base.Jeux3DragonsScraper import Jeux3DragonsScraper
 from scrapers.base.AtlasScraper import AtlasScraper
 from scrapers.base.GamezillaScraper import GamezillaScraper
 from scrapers.base.HairyTScraper import HairyTScraper
+from scrapers.base.ExorGamesScraper import ExorGamesScraper
 from db.database import engine, SQLModel, Session
 from db.models import Search
 
@@ -95,6 +96,7 @@ async def search_single(request: SingleCardSearch):
     atlasScraper = AtlasScraper(request.cardName)
     hairyTScraper = HairyTScraper(request.cardName)
     gamezillaScraper = GamezillaScraper(request.cardName)
+    exorGamesScraper = ExorGamesScraper(request.cardName)
 
 
 
@@ -114,7 +116,8 @@ async def search_single(request: SingleCardSearch):
         'sequencegaming': sequenceScraper,
         'atlas': atlasScraper,
         'hairyt': hairyTScraper,
-        'gamezilla': gamezillaScraper
+        'gamezilla': gamezillaScraper,
+        'exorgames': exorGamesScraper
 
     }
 
@@ -196,6 +199,7 @@ async def search_bulk(request: BulkCardSearch):
         atlasScraper = AtlasScraper(cardName)
         hairyTScraper = HairyTScraper(cardName)
         gamezillaScraper = GamezillaScraper(cardName)
+        exorGamesScraper = ExorGamesScraper(cardName)
 
 
         # Map scrapers to an identifier keyword
@@ -214,7 +218,8 @@ async def search_bulk(request: BulkCardSearch):
             'sequencegaming': sequenceScraper,
             'atlas': atlasScraper,
             'hairyt': hairyTScraper,
-            'gamezilla': gamezillaScraper
+            'gamezilla': gamezillaScraper,
+            'exorgames': exorGamesScraper
         }
 
         # Filter out scrapers that are not requested in request.websites
