@@ -95,7 +95,6 @@ class AtlasScraper(Scraper):
             # need to do this for each variant
             for variant in result.select('div.variants div.variant-row'):
                 condition = variant.select_one('span.variant-short-info').getText()
-                print(condition)
                 if 'NM' in condition:
                     condition = 'NM'
                 elif 'LP' in condition:
