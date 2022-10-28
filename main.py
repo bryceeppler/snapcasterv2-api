@@ -124,7 +124,11 @@ async def search_single(request: SingleCardSearch):
 
     # Filter out scrapers that are not requested in request.websites
     try:
-        scrapers = [scraperMap[website] for website in request.websites]
+        # if "all" in request.websites: then we want all scrapers
+        if "all" in request.websites:
+            scrapers = scraperMap.values()
+        else:
+            scrapers = [scraperMap[website] for website in request.websites]
     except KeyError:
         return {"error": "Invalid website provided"}
     
