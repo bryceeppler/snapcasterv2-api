@@ -19,6 +19,7 @@ from scrapers.base.SequenceScraper import SequenceScraper
 from scrapers.base.TopDeckHeroScraper import TopDeckHeroScraper
 from scrapers.base.Jeux3DragonsScraper import Jeux3DragonsScraper
 from scrapers.base.AtlasScraper import AtlasScraper
+from scrapers.base.HairyTScraper import HairyTScraper
 from db.database import engine, SQLModel, Session
 from db.models import Search
 
@@ -91,6 +92,7 @@ async def search_single(request: SingleCardSearch):
     jeux3DragonsScraper = Jeux3DragonsScraper(request.cardName)
     sequenceScraper = SequenceScraper(request.cardName)
     atlasScraper = AtlasScraper(request.cardName)
+    hairyTScraper = HairyTScraper(request.cardName)
 
 
 
@@ -108,7 +110,8 @@ async def search_single(request: SingleCardSearch):
         "topdeckhero": topDeckHeroScraper,
         "jeux3dragons": jeux3DragonsScraper,
         'sequencegaming': sequenceScraper,
-        'atlas': atlasScraper
+        'atlas': atlasScraper,
+        'hairyt': hairyTScraper
 
     }
 
@@ -188,6 +191,7 @@ async def search_bulk(request: BulkCardSearch):
         jeux3DragonsScraper = Jeux3DragonsScraper(cardName)
         sequenceScraper = SequenceScraper(cardName)
         atlasScraper = AtlasScraper(cardName)
+        hairyTScraper = HairyTScraper(cardName)
 
         # Map scrapers to an identifier keyword
         scraperMap = {
@@ -203,7 +207,8 @@ async def search_bulk(request: BulkCardSearch):
             'topdeckhero': topDeckHeroScraper,
             'jeux3dragons': jeux3DragonsScraper,
             'sequencegaming': sequenceScraper,
-            'atlas': atlasScraper
+            'atlas': atlasScraper,
+            'hairyt': hairyTScraper
         }
 
         # Filter out scrapers that are not requested in request.websites
