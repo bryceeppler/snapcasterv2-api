@@ -97,7 +97,11 @@ class FaceToFaceScraper(Scraper):
                     # print(json.dumps(variant))
                     if int(variant['child_inventory_level'][0]) <= 0:
                         continue
+                    print(float(variant['child_price_retail'][0]))
                     price = float(variant['child_price_retail'][0])
+                    if price == 0:
+                        # try getting the price from the parent's price_retail
+                        price = float(cardDocument['price_retail'][0])
                     foil = False
                     try:
                         if "Foil" in variant['option_finish']:
@@ -110,6 +114,9 @@ class FaceToFaceScraper(Scraper):
                     except:
                         condition = "SCN"
 
+                    if price == 0:
+                        print("price from down here")
+                        # print(json.dumps(card))
                     self.results.append({
                         'name': cardName,
                         'set': setName,
