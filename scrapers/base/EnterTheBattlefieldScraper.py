@@ -2,17 +2,17 @@ import requests
 import json
 from .Scraper import Scraper
 
-class GameKnightScraper(Scraper):
+class EnterTheBattlefieldScraper(Scraper):
     """
-    GameKnight uses an API to get card data.
+    EnterTheBattlefield can be scraped by hitting their API.
 
     Split cards can be searched using "//" as a split
     """
     def __init__(self, cardName):
         Scraper.__init__(self, cardName)
-        self.siteUrl = 'https://www.gameknight.ca'
+        self.siteUrl = 'https://www.enterthebattlefield.ca'
         self.url = "https://portal.binderpos.com/external/shopify/products/forStore"
-        self.website = 'gameknight'
+        self.website = 'enterthebattlefield'
 
     def scrape(self):
         # make the card name url friendly
@@ -20,7 +20,7 @@ class GameKnightScraper(Scraper):
         
         response = requests.post(self.url, 
             json={
-                "storeUrl": "gameknight-games.myshopify.com",
+                "storeUrl": "enter-the-battlefield.myshopify.com",
                 "game": "mtg",
                 "strict": None,
                 "sortTypes": [
@@ -36,31 +36,33 @@ class GameKnightScraper(Scraper):
                 "priceLessThan": None,
                 "instockOnly": True,
                 "limit": 18,
-                "offset": 0
+                "offset": 0,
+                "setNames": [],
+                "colors": [],
+                "rarities": [],
+                "types": []
             },
             headers={
                 "authority": "portal.binderpos.com",
-                "accept": "application/json, text/javascript, */*; q=0.01",
+                "accept": "application/json",
                 "accept-language": "en-US,en;q=0.9",
                 "cache-control": "no-cache",
-                "content-type": "application/json; charset=UTF-8",
-                "origin": "https://gameknight.ca",
+                "content-type": "application/json",
+                "origin": "https://enterthebattlefield.ca",
                 "pragma": "no-cache",
-                "referer": "https://gameknight.ca/",
+                "referer": "https://enterthebattlefield.ca/",
                 "sec-ch-ua": '"Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"',
-                "sec-ch-ua-mobile": "?1",
-                "sec-ch-ua-platform": '"Android"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"macOS"',
                 "sec-fetch-dest": "empty",
                 "sec-fetch-mode": "cors",
                 "sec-fetch-site": "cross-site",
-                "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36"
-            }
+                "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
+            },
         )
-        # Load the response 
+        # Load the response
         data = json.loads(response.text)
 
-        # print (data)
-        # parse the json data
         for card in data['products']:
             titleAndSet = card['title']
             if "Art Card" in titleAndSet:
