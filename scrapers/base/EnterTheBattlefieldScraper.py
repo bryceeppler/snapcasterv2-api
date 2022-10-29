@@ -15,24 +15,6 @@ class EnterTheBattlefieldScraper(Scraper):
         self.website = 'enterthebattlefield'
 
     def scrape(self):
-#         curl 'https://portal.binderpos.com/external/shopify/products/forStore' \
-#   -H 'authority: portal.binderpos.com' \
-#   -H 'accept: application/json' \
-#   -H 'accept-language: en-US,en;q=0.9' \
-#   -H 'cache-control: no-cache' \
-#   -H 'content-type: application/json' \
-#   -H 'origin: https://enterthebattlefield.ca' \
-#   -H 'pragma: no-cache' \
-#   -H 'referer: https://enterthebattlefield.ca/' \
-#   -H 'sec-ch-ua: "Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"' \
-#   -H 'sec-ch-ua-mobile: ?0' \
-#   -H 'sec-ch-ua-platform: "macOS"' \
-#   -H 'sec-fetch-dest: empty' \
-#   -H 'sec-fetch-mode: cors' \
-#   -H 'sec-fetch-site: cross-site' \
-#   -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36' \
-#   --data-raw '{"storeUrl":"enter-the-battlefield.myshopify.com","game":"mtg","strict":null,"sortTypes":[{"type":"price","asc":false,"order":1}],"variants":null,"title":"fblthp, the lost","priceGreaterThan":0,"priceLessThan":null,"instockOnly":true,"limit":18,"offset":0,"setNames":[],"colors":[],"rarities":[],"types":[]}' \
-#   --compressed
         # make the card name url friendly
         cardName = self.cardName.replace('"', '%22')
         
