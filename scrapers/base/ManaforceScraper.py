@@ -96,4 +96,3 @@ class ManaforceScraper(Scraper):
                 }
 
                 self.results.append(card)
-                print("FROM MANAFORCE: ", card)
