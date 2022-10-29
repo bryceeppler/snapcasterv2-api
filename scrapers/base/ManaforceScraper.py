@@ -2,27 +2,19 @@ from bs4 import BeautifulSoup
 import requests
 from .Scraper import Scraper
 
-class SequenceScraper(Scraper):
+class ManaforceScraper(Scraper):
     """
-    sequence games uses no api, everything is server side.
+    Manaforce uses no api, everything is server side.
     So we need to use bs4 to scrape the data.
 
     The advanced search allows us to request in-stock cards only.
     
     Split cards can be searched using one or two slashes in the url, the results are the same.
-    We just have to convert slashes to "%2F" in the url.
-
-    commas: %2C
-    apostrophes: %27
-    spaces: +
-    slashes: %2F
-    dashes: included in the name, don't touch
-
     """
     def __init__(self, cardName):
         Scraper.__init__(self, cardName)
-        self.baseUrl = 'https://www.sequencecomics.ca'
-        self.website = 'sequencegaming'
+        self.baseUrl = 'https://www.manaforce.ca'
+        self.website = 'manaforce'
         self.url = self.createUrl()
 
     def createUrl(self):
@@ -43,6 +35,8 @@ class SequenceScraper(Scraper):
         
         for result in results:
             name = result.select_one('div.meta h4.name').getText()
+            if "Art Card" in name:
+                continue
             # foil status is in the name as - Foil, same with Borderless
             foil = False
             borderless = False
@@ -61,7 +55,7 @@ class SequenceScraper(Scraper):
 
             # get the href from the a tag with an itemprop="url" attribute
             link = self.baseUrl + result.select_one('a[itemprop="url"]')['href']
-            if 'magic_singles' not in link:
+            if 'magic_the_gathering_singles' not in link:
                 # not a magic card
                 continue
 
@@ -74,10 +68,11 @@ class SequenceScraper(Scraper):
 
             # get the image src from inside from the div with image class
             image = result.select_one('div.image img')['src']
-
+            print(image)
             for variant in result.select('div.variants div.variant-row'):
                 condition = variant.select_one('span.variant-short-info').getText()
-                if 'NM' in condition:
+                print(condition)
+                if 'Near Mint' in condition:
                     condition = 'NM'
                 elif 'Light' in condition:
                     condition = 'LP'
