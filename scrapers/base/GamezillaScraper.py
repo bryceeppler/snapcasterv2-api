@@ -39,6 +39,8 @@ class GamezillaScraper(Scraper):
                 continue
 
             cardNameAndSet = card.select_one('p.productTitle').getText()
+            if "Art Card" in cardNameAndSet:
+                continue
 
             # cardNameAndSet = "Card Name [Card set]"
             # we need to split the card name and set

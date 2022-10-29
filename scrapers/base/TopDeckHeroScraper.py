@@ -1,15 +1,11 @@
-from re import I
-from unittest import result
 from bs4 import BeautifulSoup
 import requests
-import json
 from .Scraper import Scraper
 
 class TopDeckHeroScraper(Scraper):
     """
     TopDeckHero can be scraped by creating a URL from their advanced search
     This allows us to search for cards that are in stock
-
 
     Split cards can be searched using "//" as a split
     Spaces are replaced with "+"
@@ -47,6 +43,8 @@ class TopDeckHeroScraper(Scraper):
         
         for result in results:
             name = result.select_one('div.meta h4.name').getText()
+            if "Art Card" in name:
+                continue
             # foil status is in the name as - Foil, same with Borderless
             foil = False
             borderless = False
@@ -84,14 +82,9 @@ class TopDeckHeroScraper(Scraper):
             if ' - ' in setName:
                 setName = setName.split(' - ')[0]
 
-
-
             # get the image src from inside from the div with image class
             image = result.select_one('div.image img')['src']
 
-
-            # TODO
-            # need to do this for each variant
             for variant in result.select('div.variants div.variant-row'):
                 condition = variant.select_one('span.variant-short-info').getText()
                 if 'Mint' in condition:

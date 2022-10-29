@@ -1,4 +1,3 @@
-from bs4 import BeautifulSoup
 import requests
 import json
 from .Scraper import Scraper
@@ -8,7 +7,6 @@ class GameKnightScraper(Scraper):
     GameKnight uses an API to get card data.
 
     Split cards can be searched using "//" as a split
-
     """
     def __init__(self, cardName):
         Scraper.__init__(self, cardName)
@@ -17,25 +15,6 @@ class GameKnightScraper(Scraper):
         self.website = 'gameknight'
 
     def scrape(self):
-# curl 'https://portal.binderpos.com/external/shopify/products/forStore' \
-#   -H 'authority: portal.binderpos.com' \
-#   -H 'accept: application/json, text/javascript, */*; q=0.01' \
-#   -H 'accept-language: en-US,en;q=0.9' \
-#   -H 'cache-control: no-cache' \
-#   -H 'content-type: application/json; charset=UTF-8' \
-#   -H 'origin: https://gameknight.ca' \
-#   -H 'pragma: no-cache' \
-#   -H 'referer: https://gameknight.ca/' \
-#   -H 'sec-ch-ua: "Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"' \
-#   -H 'sec-ch-ua-mobile: ?1' \
-#   -H 'sec-ch-ua-platform: "Android"' \
-#   -H 'sec-fetch-dest: empty' \
-#   -H 'sec-fetch-mode: cors' \
-#   -H 'sec-fetch-site: cross-site' \
-#   -H 'user-agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36' \
-#   --data-raw '{"storeUrl":"gameknight-games.myshopify.com","game":"mtg","strict":null,"sortTypes":[{"type":"price","asc":false,"order":1}],"variants":null,"title":"fblthp","priceGreaterThan":0,"priceLessThan":null,"instockOnly":true,"limit":18,"offset":0}' \
-#   --compressed
-        
         # make the card name url friendly
         cardName = self.cardName.replace('"', '%22')
         
@@ -84,6 +63,8 @@ class GameKnightScraper(Scraper):
         # parse the json data
         for card in data['products']:
             titleAndSet = card['title']
+            if "Art Card" in titleAndSet:
+                continue
             # split the title and set
             title = titleAndSet.split("[")[0].strip()
             setName = titleAndSet.split("[")[1].split("]")[0].strip()

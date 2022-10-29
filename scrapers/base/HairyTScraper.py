@@ -1,18 +1,12 @@
-from bs4 import BeautifulSoup
 import requests
 import json
 from .Scraper import Scraper
 
 class HairyTScraper(Scraper):
     """
-    Everything games uses a completely exposed API to get the stock of cards
-    We can literally hit the API and get all the information we need
+    HairyT can be scraped by hitting their API.
 
     Split cards can be searched using "//" as a split
-    
-
-    https://www.everythinggames.ca/search?type=product&options[prefix]=last&q=title:adrix and nev, twin&view=json
-    https://www.everythinggames.ca/search?type=product&options[prefix]=last&q=title:${cardName}&view=json
     """
     def __init__(self, cardName):
         Scraper.__init__(self, cardName)
@@ -21,26 +15,6 @@ class HairyTScraper(Scraper):
         self.website = 'hairyt'
 
     def scrape(self):
-        # get the json data from this curl request
-    # curl 'https://portal.binderpos.com/external/shopify/products/forStore' \
-    #   -H 'authority: portal.binderpos.com' \
-    #   -H 'accept: application/json, text/javascript, */*; q=0.01' \
-    #   -H 'accept-language: en-US,en;q=0.9' \
-    #   -H 'cache-control: no-cache' \
-    #   -H 'content-type: application/json; charset=UTF-8' \
-    #   -H 'origin: https://hairyt.com' \
-    #   -H 'pragma: no-cache' \
-    #   -H 'referer: https://hairyt.com/' \
-    #   -H 'sec-ch-ua: "Google Chrome";v="107", "Chromium";v="107", "Not=A?Brand";v="24"' \
-    #   -H 'sec-ch-ua-mobile: ?1' \
-    #   -H 'sec-ch-ua-platform: "Android"' \
-    #   -H 'sec-fetch-dest: empty' \
-    #   -H 'sec-fetch-mode: cors' \
-    #   -H 'sec-fetch-site: cross-site' \
-    #   -H 'user-agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Mobile Safari/537.36' \
-    #   --data-raw '{"storeUrl":"hairytarantula.myshopify.com","game":"mtg","strict":null,"sortTypes":[{"type":"price","asc":false,"order":1}],"variants":null,"title":"counterspell","priceGreaterThan":0,"priceLessThan":null,"instockOnly":true,"limit":18,"offset":0}' \
-    #   --compressed
-        
         # make the card name url friendly
         cardName = self.cardName.replace('"', '%22')
         
@@ -79,10 +53,10 @@ class HairyTScraper(Scraper):
         # Load the response
         data = json.loads(response.text)
 
-        # print (data)
-        # parse the json data
         for card in data['products']:
             titleAndSet = card['title']
+            if "Art Card" in titleAndSet:
+                continue
             # split the title and set
             title = titleAndSet.split("[")[0].strip()
             setName = titleAndSet.split("[")[1].split("]")[0].strip()

@@ -1,8 +1,5 @@
-from re import I
-from unittest import result
 from bs4 import BeautifulSoup
 import requests
-import json
 from .Scraper import Scraper
 
 class ConnectionGamesScraper(Scraper):
@@ -17,11 +14,8 @@ class ConnectionGamesScraper(Scraper):
     https://www.theconnectiongames.com/advanced_search?utf8=%E2%9C%93&search%5Bfuzzy_search%5D=wear+%2F%2F+tear&search%5Btags_name_eq%5D=&search%5Bsell_price_gte%5D=&search%5Bsell_price_lte%5D=&search%5Bbuy_price_gte%5D=&search%5Bbuy_price_lte%5D=&search%5Bin_stock%5D=0&search%5Bin_stock%5D=1&buylist_mode=0&search%5Bcategory_ids_with_descendants%5D%5B%5D=&search%5Bcategory_ids_with_descendants%5D%5B%5D=&search%5Bsort%5D=name&search%5Bdirection%5D=ascend&commit=Search&search%5Bcatalog_group_id_eq%5D=
     https://www.theconnectiongames.com/advanced_search?utf8=%E2%9C%93&search%5Bfuzzy_search%5D={ }&search%5Btags_name_eq%5D=&search%5Bsell_price_gte%5D=&search%5Bsell_price_lte%5D=&search%5Bbuy_price_gte%5D=&search%5Bbuy_price_lte%5D=&search%5Bin_stock%5D=0&search%5Bin_stock%5D=1&buylist_mode=0&search%5Bcategory_ids_with_descendants%5D%5B%5D=&search%5Bcategory_ids_with_descendants%5D%5B%5D=&search%5Bsort%5D=name&search%5Bdirection%5D=ascend&commit=Search&search%5Bcatalog_group_id_eq%5D=
    
-   
-    
     Split cards can be searched using one or two slashes in the url, the results are the same.
     We just have to convert slashes to "%2F" in the url.
-
 
     commas: %2C
     apostrophes: %27
@@ -37,7 +31,6 @@ class ConnectionGamesScraper(Scraper):
         self.url = self.createUrl()
 
     def createUrl(self):
-        # baseUrl + /advanced_search?utf8=✓&search%5Bfuzzy_search%5D= + cardName + &search%5Btags_name_eq%5D=&search%5Bsell_price_gte%5D=&search%5Bsell_price_lte%5D=&search%5Bbuy_price_gte%5D=&search%5Bbuy_price_lte%5D=&search%5Bin_stock%5D=0&search%5Bin_stock%5D=1&buylist_mode=0&search%5Bcategory_ids_with_descendants%5D%5B%5D=&search%5Bcategory_ids_with_descendants%5D%5B%5D=&search%5Bsort%5D=name&search%5Bdirection%5D=ascend&commit=Search&search%5Bcatalog_group_id_eq%5D=
         urlCardName = self.cardName.replace(',', '%2C').replace("'", '%27').replace(' ', '+').replace('/', '%2F')
         searchPrepend = '/advanced_search?utf8=%E2%9C%93&search%5Bfuzzy_search%5D=' 
         searchAppend = '&search%5Btags_name_eq%5D=&search%5Bsell_price_gte%5D=&search%5Bsell_price_lte%5D=&search%5Bbuy_price_gte%5D=&search%5Bbuy_price_lte%5D=&search%5Bin_stock%5D=0&search%5Bin_stock%5D=1&buylist_mode=0&search%5Bcategory_ids_with_descendants%5D%5B%5D=&search%5Bcategory_ids_with_descendants%5D%5B%5D=&search%5Bsort%5D=name&search%5Bdirection%5D=ascend&commit=Search&search%5Bcatalog_group_id_eq%5D='
@@ -54,6 +47,8 @@ class ConnectionGamesScraper(Scraper):
         
         for result in results:
             name = result.select_one('div.meta h4.name').getText()
+            if "Art Card" in name:
+                continue
             # foil status is in the name as - Foil, same with Borderless
             foil = False
             borderless = False

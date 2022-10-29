@@ -1,11 +1,10 @@
-from bs4 import BeautifulSoup
 import requests
 import json
 from .Scraper import Scraper
 
 class ExorGamesScraper(Scraper):
     """
-    Exor games uses an exposed API to get the stock of cards
+    Exor games uses an API to get the stock of cards
     We can hit the API and get all the information we need
 
     Split cards can be searched using "//" as a split
@@ -62,6 +61,8 @@ class ExorGamesScraper(Scraper):
 
         for card in data['products']:
             titleAndSet = card['title']
+            if 'Art Card' in titleAndSet:
+                continue
             # split the title and set
             title = titleAndSet.split("[")[0].strip()
             setName = titleAndSet.split("[")[1].split("]")[0].strip()
