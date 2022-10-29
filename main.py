@@ -27,6 +27,7 @@ from scrapers.base.EnterTheBattlefieldScraper import EnterTheBattlefieldScraper
 from scrapers.base.ManaforceScraper import ManaforceScraper
 from scrapers.base.FirstPlayerScraper import FirstPlayerScraper
 from scrapers.base.OrchardCityScraper import OrchardCityScraper
+from scrapers.base.BorderCityScraper import BorderCityScraper
 from db.database import engine, SQLModel, Session
 from db.models import Search
 
@@ -107,7 +108,7 @@ async def search_single(request: SingleCardSearch):
     manaforceScraper = ManaforceScraper(request.cardName)
     firstPlayerScraper = FirstPlayerScraper(request.cardName)
     orchardCityScraper = OrchardCityScraper(request.cardName)
-
+    borderCityScraper = BorderCityScraper(request.cardName)
 
     # Map scrapers to an identifier keyword
     scraperMap = {
@@ -132,6 +133,7 @@ async def search_single(request: SingleCardSearch):
         'firstplayer': firstPlayerScraper,
         'manaforce': manaforceScraper,
         'orchardcity': orchardCityScraper,
+        'bordercity': borderCityScraper,
     }
 
 
@@ -222,6 +224,7 @@ async def search_bulk(request: BulkCardSearch):
         manaforceScraper = ManaforceScraper(cardName)
         firstPlayerScraper = FirstPlayerScraper(cardName)
         orchardCityScraper = OrchardCityScraper(cardName)
+        borderCityScraper = BorderCityScraper(cardName)
 
         # Map scrapers to an identifier keyword
         scraperMap = {
@@ -246,6 +249,7 @@ async def search_bulk(request: BulkCardSearch):
             'manaforce': manaforceScraper,
             'firstplayer': firstPlayerScraper,
             'orchardcity': orchardCityScraper,
+            'bordercity': borderCityScraper,
         }
 
         # Filter out scrapers that are not requested in request.websites
