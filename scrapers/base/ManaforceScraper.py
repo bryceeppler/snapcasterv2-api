@@ -68,10 +68,8 @@ class ManaforceScraper(Scraper):
 
             # get the image src from inside from the div with image class
             image = result.select_one('div.image img')['src']
-            print(image)
             for variant in result.select('div.variants div.variant-row'):
                 condition = variant.select_one('span.variant-short-info').getText()
-                print(condition)
                 if 'Near Mint' in condition:
                     condition = 'NM'
                 elif 'Light' in condition:
@@ -98,3 +96,4 @@ class ManaforceScraper(Scraper):
                 }
 
                 self.results.append(card)
+                print("FROM MANAFORCE: ", card)

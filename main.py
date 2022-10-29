@@ -25,6 +25,7 @@ from scrapers.base.ExorGamesScraper import ExorGamesScraper
 from scrapers.base.GameKnightScraper import GameKnightScraper
 from scrapers.base.EnterTheBattlefieldScraper import EnterTheBattlefieldScraper
 from scrapers.base.ManaforceScraper import ManaforceScraper
+from scrapers.base.FirstPlayerScraper import FirstPlayerScraper
 from db.database import engine, SQLModel, Session
 from db.models import Search
 
@@ -103,7 +104,7 @@ async def search_single(request: SingleCardSearch):
     gameKnightScraper = GameKnightScraper(request.cardName)
     enterTheBattlefieldScraper = EnterTheBattlefieldScraper(request.cardName)
     manaforceScraper = ManaforceScraper(request.cardName)
-
+    firstPlayerScraper = FirstPlayerScraper(request.cardName)
 
 
     # Map scrapers to an identifier keyword
@@ -126,8 +127,8 @@ async def search_single(request: SingleCardSearch):
         'exorgames': exorGamesScraper,
         'gameknight': gameKnightScraper,
         'enterthebattlefield': enterTheBattlefieldScraper,
-        'manaforce': manaforceScraper
-
+        'firstplayer': firstPlayerScraper,
+        'manaforce': manaforceScraper,
     }
 
 
@@ -216,6 +217,7 @@ async def search_bulk(request: BulkCardSearch):
         gameKnightScraper = GameKnightScraper(cardName)
         enterTheBattlefieldScraper = EnterTheBattlefieldScraper(cardName)
         manaforceScraper = ManaforceScraper(cardName)
+        firstPlayerScraper = FirstPlayerScraper(cardName)
 
         # Map scrapers to an identifier keyword
         scraperMap = {
@@ -237,7 +239,8 @@ async def search_bulk(request: BulkCardSearch):
             'exorgames': exorGamesScraper,
             'gameknight': gameKnightScraper,
             'enterthebattlefield': enterTheBattlefieldScraper,
-            'manaforce': manaforceScraper
+            'manaforce': manaforceScraper,
+            'firstplayer': firstPlayerScraper
         }
 
         # Filter out scrapers that are not requested in request.websites
