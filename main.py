@@ -24,6 +24,7 @@ from scrapers.base.HairyTScraper import HairyTScraper
 from scrapers.base.ExorGamesScraper import ExorGamesScraper
 from scrapers.base.GameKnightScraper import GameKnightScraper
 from scrapers.base.EnterTheBattlefieldScraper import EnterTheBattlefieldScraper
+from scrapers.base.ACGamesScraper import ACGamesScraper
 from db.database import engine, SQLModel, Session
 from db.models import Search
 
@@ -101,6 +102,7 @@ async def search_single(request: SingleCardSearch):
     exorGamesScraper = ExorGamesScraper(request.cardName)
     gameKnightScraper = GameKnightScraper(request.cardName)
     enterTheBattlefieldScraper = EnterTheBattlefieldScraper(request.cardName)
+    acGamesScraper = ACGamesScraper(request.cardName)
 
 
 
@@ -123,7 +125,8 @@ async def search_single(request: SingleCardSearch):
         'gamezilla': gamezillaScraper,
         'exorgames': exorGamesScraper,
         'gameknight': gameKnightScraper,
-        'enterthebattlefield': enterTheBattlefieldScraper
+        'enterthebattlefield': enterTheBattlefieldScraper,
+        'acgames': acGamesScraper
 
     }
 
@@ -212,6 +215,7 @@ async def search_bulk(request: BulkCardSearch):
         exorGamesScraper = ExorGamesScraper(cardName)
         gameKnightScraper = GameKnightScraper(cardName)
         enterTheBattlefieldScraper = EnterTheBattlefieldScraper(cardName)
+        acGamesScraper = ACGamesScraper(cardName)
 
 
         # Map scrapers to an identifier keyword
@@ -233,7 +237,8 @@ async def search_bulk(request: BulkCardSearch):
             'gamezilla': gamezillaScraper,
             'exorgames': exorGamesScraper,
             'gameknight': gameKnightScraper,
-            'enterthebattlefield': enterTheBattlefieldScraper
+            'enterthebattlefield': enterTheBattlefieldScraper,
+            'acgames': acGamesScraper
         }
 
         # Filter out scrapers that are not requested in request.websites
