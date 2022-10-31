@@ -80,7 +80,8 @@ class Jeux3DragonsScraper(Scraper):
             # we want to remove any tags like that if they contain MISC
             if 'MISC' in setName:
                 setName = setName.split(' (')[0]
-                
+            if 'COM' in setName:
+                setName = setName.split(' (')[0]
 
 
 
