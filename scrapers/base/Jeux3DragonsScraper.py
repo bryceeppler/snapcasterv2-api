@@ -44,6 +44,7 @@ class Jeux3DragonsScraper(Scraper):
 
         if len(results) == 0:
             return None
+            
         
         for result in results:
             name = result.select_one('div.meta h4.name').getText()
@@ -72,9 +73,12 @@ class Jeux3DragonsScraper(Scraper):
             if 'magic_singles' not in link:
                 # not a magic card
                 continue
+            if 'art_series' in link:
+                continue
 
             # get the set from div.meta span.category
             setName = result.select_one('div.meta span.category').getText()
+            print(setName)
 
             # sometimes there are weird tags like setName (MISC4) or setName (MISC3)
             # we want to remove any tags like that if they contain MISC

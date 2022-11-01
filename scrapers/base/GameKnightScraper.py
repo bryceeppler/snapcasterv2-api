@@ -63,7 +63,7 @@ class GameKnightScraper(Scraper):
         # parse the json data
         for card in data['products']:
             titleAndSet = card['title']
-            if "Art Card" in titleAndSet:
+            if "Art Card" or "Art Series" in titleAndSet:
                 continue
             # split the title and set
             title = titleAndSet.split("[")[0].strip()

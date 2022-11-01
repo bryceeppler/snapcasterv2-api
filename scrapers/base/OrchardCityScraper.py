@@ -35,7 +35,7 @@ class OrchardCityScraper(Scraper):
         
         for result in results:
             name = result.select_one('div.meta h4.name').getText()
-            if "Art Card" in name:
+            if "Art Card" or "Art Series" in name:
                 continue
             # foil status is in the name as - Foil, same with Borderless
             foil = False

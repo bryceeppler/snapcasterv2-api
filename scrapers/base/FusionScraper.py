@@ -67,6 +67,8 @@ class FusionScraper(Scraper):
             link = self.baseUrl + card.select_one('div.image-meta div.image a')['href']
             imageUrl = card.select_one('div.image-meta div.image a img')['src']
             setName = card.select_one('div.image-meta div.meta span.category').getText()
+            if "art series" in setName.lower():
+                continue
 
             condition = card.select_one('span.variant-description').getText()
             if "NM" in condition:

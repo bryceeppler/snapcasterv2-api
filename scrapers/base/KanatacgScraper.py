@@ -63,6 +63,8 @@ class KanatacgScraper(Scraper):
             link = self.baseUrl + card.select('td')[1].select_one('a')['href']
             imageUrl = card.select_one('td a')['href']
             setName = card.select('td')[1].select_one('small').getText()
+            if "art series" in setName.lower():
+                continue
 
             # sometimes there is a " - Borderless" tag in the set name
             # we want to remove it
