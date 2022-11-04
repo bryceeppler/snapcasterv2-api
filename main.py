@@ -28,6 +28,10 @@ from scrapers.base.ManaforceScraper import ManaforceScraper
 from scrapers.base.FirstPlayerScraper import FirstPlayerScraper
 from scrapers.base.OrchardCityScraper import OrchardCityScraper
 from scrapers.base.BorderCityScraper import BorderCityScraper
+
+from scrapers.sealed.GauntletSealedScraper import GauntletSealedScraper
+from scrapers.sealed.Four01SealedScraper import Four01SealedScraper
+
 from db.database import engine, SQLModel, Session
 from db.models import Search
 
@@ -43,6 +47,10 @@ class BulkCardSearch(BaseModel):
     cardNames: list
     websites: list
     worstCondition: str
+
+class SealedSearch(BaseModel):
+    setName: str
+    websites: list
 
 app = FastAPI()
 
@@ -290,6 +298,88 @@ async def search_bulk(request: BulkCardSearch):
     session.close()
 
     return totalResults
+
+
+@app.post("/search/sealed/")
+async def search_sealed(request: SealedSearch):
+    """
+    Search for a set name and return all in stock sealed products for the set
+    """
+    setName = request.setName
+    websites = request.websites
+    results = []
+
+    # Scraper function
+    def transform(scraper):
+        scraper.scrape()
+        scraperResults = scraper.getResults()
+        for result in scraperResults:
+            results.append(result)
+        return
+
+    # Arrange scrapers
+    four01Scraper = Four01SealedScraper(setName)
+    gauntletScraper = GauntletSealedScraper(setName)
+
+
+    # Map scrapers to an identifier keyword
+    scraperMap = {
+        # "houseofcards": houseOfCardsScraper,
+        "four01": four01Scraper,
+        "gauntlet": gauntletScraper,
+        # "kanatacg": kanatacgScraper,
+        # "fusion": fusionScraper,
+        # "everythinggames": everythingGamesScraper,
+        # "magicstronghold": magicStrongholdScraper,
+        # "facetoface": faceToFaceScraper,
+        # "connectiongames": connectionGamesScraper,
+        # "topdeckhero": topDeckHeroScraper,
+        # "jeux3dragons": jeux3DragonsScraper,
+        # 'sequencegaming': sequenceScraper,
+        # 'atlas': atlasScraper,
+        # 'hairyt': hairyTScraper,
+        # 'gamezilla': gamezillaScraper,
+        # 'exorgames': exorGamesScraper,
+        # 'gameknight': gameKnightScraper,
+        # 'enterthebattlefield': enterTheBattlefieldScraper,
+        # 'firstplayer': firstPlayerScraper,
+        # 'manaforce': manaforceScraper,
+        # 'orchardcity': orchardCityScraper,
+        # 'bordercity': borderCityScraper,
+    }
+
+
+    # Filter out scrapers that are not requested in request.websites
+    try:
+        # if "all" in request.websites: then we want all scrapers
+        if "all" in request.websites:
+            scrapers = scraperMap.values()
+        else:
+            scrapers = [scraperMap[website] for website in request.websites]
+    except KeyError:
+        return {"error": "Invalid website provided"}
+    
+    # scrapers = [
+    #     connectionGamesScraper      
+    # ]
+
+    # Run scrapers in parallel
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        threadResults = executor.map(transform, scrapers)
+
+    # Create a new search object
+    # post a log to the database
+    numResults = len(results)
+    log = Search(query=request.setName, websites=','.join(request.websites), queryType="sealed", results="", numResults=numResults, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    SQLModel.metadata.create_all(engine)
+    session = Session(engine)
+    session.add(log)
+    session.commit()
+    session.close()
+
+    return results
+    
+
 
 # log search queries in database
 @app.post("/log/")
