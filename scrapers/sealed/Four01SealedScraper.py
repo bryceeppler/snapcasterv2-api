@@ -41,7 +41,6 @@ class Four01SealedScraper(SealedScraper):
             prettyName = name.replace("MTG - ", "")
             # We want to remove any language from the name
             prettyName = self.removeLanguage(prettyName)
-            # prettyName = name.replace(" - ", "")
             
             image = item['t']
             link = self.siteUrl + item['u']
