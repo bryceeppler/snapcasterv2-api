@@ -51,6 +51,7 @@ class GauntletSealedScraper(SealedScraper):
             imageUrl = product.select_one('img')['src']
             price = product.select_one('div.variant-row').select_one('form.add-to-cart-form')['data-price'].replace("CAD$ ","")
             stock = product.select_one('div.variant-row span.variant-qty').text.replace(" In Stock", "")
+            tags = self.setTags(name)
 
             self.results.append({
                 'name': name,
@@ -58,7 +59,8 @@ class GauntletSealedScraper(SealedScraper):
                 'image': imageUrl,
                 'price': float(price),
                 'stock': int(stock),
-                'website': self.website
+                'website': self.website,
+                'tags': tags,
             })
 
 def main():
