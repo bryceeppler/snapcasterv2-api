@@ -30,6 +30,7 @@ from scrapers.base.OrchardCityScraper import OrchardCityScraper
 from scrapers.base.BorderCityScraper import BorderCityScraper
 
 from scrapers.sealed.GauntletSealedScraper import GauntletSealedScraper
+from scrapers.sealed.Four01SealedScraper import Four01SealedScraper
 
 from db.database import engine, SQLModel, Session
 from db.models import Search
@@ -317,15 +318,17 @@ async def search_sealed(request: SealedSearch):
         return
 
     # Arrange scrapers
+    four01Scraper = Four01SealedScraper(setName)
     gauntletScraper = GauntletSealedScraper(setName)
+
 
     # Map scrapers to an identifier keyword
     scraperMap = {
         # "houseofcards": houseOfCardsScraper,
+        "four01": four01Scraper,
         "gauntlet": gauntletScraper,
         # "kanatacg": kanatacgScraper,
         # "fusion": fusionScraper,
-        # "four01": four01Scraper,
         # "everythinggames": everythingGamesScraper,
         # "magicstronghold": magicStrongholdScraper,
         # "facetoface": faceToFaceScraper,

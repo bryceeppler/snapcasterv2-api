@@ -40,3 +40,30 @@ class SealedScraper():
         if "collector" in string.lower():
             tags.append("collector")
         return tags
+
+    def setLanguage(self, string):
+        """
+        returns a string of the language of the card
+        """
+        if "english" in string.lower():
+            return "English"
+        elif "russian" in string.lower():
+            return "Russian"
+        elif "korean" in string.lower():
+            return "Korean"
+        elif "french" in string.lower():
+            return "French"
+        elif "german" in string.lower():
+            return "German"
+        elif "spanish" in string.lower():
+            return "Spanish"
+        elif "italian" in string.lower():
+            return "Italian"
+        elif "japanese" in string.lower():
+            return "Japanese"
+        elif "portuguese" in string.lower():
+            return "Portuguese"
+        elif "chinese" in string.lower():
+            return "Chinese"
+        else:
+            return "English"

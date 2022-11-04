@@ -60,6 +60,7 @@ class GauntletSealedScraper(SealedScraper):
                 'price': float(price),
                 'stock': int(stock),
                 'website': self.website,
+                'language': self.setLanguage(name),
                 'tags': tags,
             })
 
