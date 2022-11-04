@@ -39,6 +39,10 @@ class SealedScraper():
             tags.append("jumpstart")
         if "collector" in string.lower():
             tags.append("collector")
+        # if there is no Set or Draft tag, add the draft tag
+        if not "set" in tags and not "draft" in tags:
+            tags.append("draft")
+            
         return tags
 
     def setLanguage(self, string):
@@ -67,3 +71,30 @@ class SealedScraper():
             return "Chinese"
         else:
             return "English"
+
+    def removeLanguage(self, string):
+        # We want to remove any language from the name and return the string
+        if "english" in string.lower():
+            return string.replace("English", "")
+        elif "russian" in string.lower():
+            return string.replace("Russian", "")
+        elif "korean" in string.lower():
+            return string.replace("Korean", "")
+        elif "french" in string.lower():
+            return string.replace("French", "")
+        elif "german" in string.lower():
+            return string.replace("German", "")
+        elif "spanish" in string.lower():
+            return string.replace("Spanish", "")
+        elif "italian" in string.lower():
+            return string.replace("Italian", "")
+        elif "japanese" in string.lower():
+            return string.replace("Japanese", "")
+        elif "portuguese" in string.lower():
+            return string.replace("Portuguese", "")
+        elif "chinese" in string.lower():
+            return string.replace("Chinese", "")
+        else:
+            return string
+
+

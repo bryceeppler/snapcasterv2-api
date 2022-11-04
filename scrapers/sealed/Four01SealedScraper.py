@@ -37,6 +37,11 @@ class Four01SealedScraper(SealedScraper):
             name = item['l']
             if "commander deck" in name.lower():
                 continue
+            # We want to remove the following things from the name
+            prettyName = name.replace("MTG - ", "")
+            # We want to remove any language from the name
+            prettyName = self.removeLanguage(prettyName)
+            # prettyName = name.replace(" - ", "")
             
             image = item['t']
             link = self.siteUrl + item['u']
@@ -59,7 +64,7 @@ class Four01SealedScraper(SealedScraper):
                 
                 try:
                     self.results.append({
-                        'name': name,
+                        'name': prettyName,
                         'link': link,
                         'image': image,
                         'price': float(price),
