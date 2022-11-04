@@ -57,7 +57,8 @@ class GauntletSealedScraper(SealedScraper):
                 'link': link,
                 'image': imageUrl,
                 'price': float(price),
-                'stock': int(stock)
+                'stock': int(stock),
+                'website': self.website
             })
 
 def main():
