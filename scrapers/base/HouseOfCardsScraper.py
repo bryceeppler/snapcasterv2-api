@@ -5,6 +5,9 @@ from .Scraper import Scraper
 
 class HouseOfCardsScraper(Scraper):
     """
+    We can actually refactor this to use their API, it's exposed on the advanced search
+    for MTG singles.
+    
     Split cards can be searched using "//" as a split
     """
     def __init__(self, cardName):

@@ -19,8 +19,6 @@ class GauntletSealedScraper(SealedScraper):
     &search%5Btags_name_eq%5D=&search%5Bsell_price_gte%5D=&search%5Bsell_price_lte%5D=&search%5Bbuy_price_gte%5D=&search%5Bbuy_price_lte%5D=&search%5Bin_stock%5D=0&search%5Bin_stock%5D=1&buylist_mode=0&search%5Bcategory_ids_with_descendants%5D%5B%5D=&search%5Bcategory_ids_with_descendants%5D%5B%5D=105&search%5Bcategory_ids_with_descendants%5D%5B%5D=101&search%5Bcategory_ids_with_descendants%5D%5B%5D=100&search%5Bwith_descriptor_values%5D%5B17343%5D=&search%5Bwith_descriptor_values%5D%5B17353%5D=&search%5Bwith_descriptor_values%5D%5B17363%5D=&search%5Bwith_descriptor_values%5D%5B17373%5D=&search%5Bwith_descriptor_values%5D%5B17393%5D=&search%5Bwith_descriptor_values%5D%5B17413%5D=&search%5Bwith_descriptor_values%5D%5B17423%5D=&search%5Bwith_descriptor_values%5D%5B17443%5D=&search%5Bwith_descriptor_values%5D%5B17544%5D=&search%5Bwith_descriptor_values%5D%5B17545%5D=&search%5Bvariants_with_identifier%5D%5B19%5D%5B%5D=&search%5Bsort%5D=name&search%5Bdirection%5D=ascend&commit=Search&search%5Bcatalog_group_id_eq%5D=
     """
 
-
-
     def __init__(self, setName):
         SealedScraper.__init__(self, setName)
         self.website = 'gauntlet'
@@ -63,10 +61,3 @@ class GauntletSealedScraper(SealedScraper):
                 'language': self.setLanguage(name),
                 'tags': tags,
             })
-
-def main():
-    scraper = GauntletSealedScraper("dominaria")
-    scraper.scrape()
-
-if __name__ == "__main__":
-    main()
