@@ -5,8 +5,8 @@ class Search(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     query: str
     websites: str
-    queryType: str
+    query_type: str
     results: str
-    numResults: int
+    num_results: int
     timestamp: str
 

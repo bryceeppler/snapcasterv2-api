@@ -1,9 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 from pydantic import BaseModel
 import concurrent.futures
 from fastapi.middleware.cors import CORSMiddleware
-# import datetime
 from datetime import datetime
+import psycopg2
+from psycopg2 import sql
+import os
+import dotenv
 
 # Scrapers
 from scrapers.base.GauntletScraper import GauntletScraper
@@ -31,6 +34,7 @@ from scrapers.base.BorderCityScraper import BorderCityScraper
 
 from scrapers.sealed.GauntletSealedScraper import GauntletSealedScraper
 from scrapers.sealed.Four01SealedScraper import Four01SealedScraper
+from scrapers.sealed.HouseOfCardsSealedScraper import HouseOfCardsSealedScraper
 
 from db.database import engine, SQLModel, Session
 from db.models import Search
@@ -52,6 +56,9 @@ class SealedSearch(BaseModel):
     setName: str
     websites: list
 
+# load the differently named dev.env file with dotenv
+dotenv.load_dotenv(dotenv_path="dev.env")
+
 app = FastAPI()
 
 origins = [
@@ -71,6 +78,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Background tasks
+def post_search(query, websites, query_type, results, num_results):
+    # Connect to the database
+    conn = psycopg2.connect(
+        dbname=os.environ['PG_DB'],
+        user=os.environ['PG_USER'],
+        password=os.environ['PG_PASSWORD'],
+        host=os.environ['PG_HOST'],
+        port=os.environ['PG_PORT']
+    )
+    cur = conn.cursor()
+
+    # We want to add this search to the search table
+    # If the table doesn't exist, create it
+    #  We also need to protect against SQL injection for the query field
+
+    cur.execute("CREATE TABLE IF NOT EXISTS search (id SERIAL PRIMARY KEY, query VARCHAR, websites VARCHAR(512), query_type VARCHAR(60), results VARCHAR(255), num_results INT, timestamp TIMESTAMP);")
+    cur.execute(
+    """
+    INSERT INTO 
+        search (query, websites, query_type, results, num_results, timestamp) 
+    VALUES (%(query)s, %(websites)s, %(query_type)s, %(results)s, %(num_results)s, %(timestamp)s);
+    """, 
+        {
+            "query": query,
+            "websites": ','.join(websites),
+            "query_type": query_type,
+            "results": results,
+            "num_results": num_results,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+    )
+
+    conn.commit()
+    cur.close()
+    conn.close()
+    
 
 # Routes
 @app.get("/")
@@ -166,7 +210,7 @@ async def search_single(request: SingleCardSearch):
     # Create a new search object
     # post a log to the database
     numResults = len(results)
-    log = Search(query=request.cardName, websites=','.join(request.websites), queryType="single", results="", numResults=numResults, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    log = Search(query=request.cardName, websites=','.join(request.websites), query_type="single", results="", num_results=numResults, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     SQLModel.metadata.create_all(engine)
     session = Session(engine)
     session.add(log)
@@ -290,7 +334,7 @@ async def search_bulk(request: BulkCardSearch):
     for card in totalResults:
         numResults += len(card['variants'])
 
-    log = Search(query=','.join(request.cardNames), websites=','.join(request.websites), queryType="multi", results="", numResults=numResults, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    log = Search(query=','.join(request.cardNames), websites=','.join(request.websites), query_type="multi", results="", num_results=numResults, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     SQLModel.metadata.create_all(engine)
     session = Session(engine)
     session.add(log)
@@ -301,7 +345,7 @@ async def search_bulk(request: BulkCardSearch):
 
 
 @app.post("/search/sealed/")
-async def search_sealed(request: SealedSearch):
+async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks):
     """
     Search for a set name and return all in stock sealed products for the set
     """
@@ -311,8 +355,11 @@ async def search_sealed(request: SealedSearch):
 
     # Scraper function
     def transform(scraper):
+        print("Scraping")
         scraper.scrape()
+        print("Scraping Complete")
         scraperResults = scraper.getResults()
+        print("results: ", scraperResults)
         for result in scraperResults:
             results.append(result)
         return
@@ -320,13 +367,14 @@ async def search_sealed(request: SealedSearch):
     # Arrange scrapers
     four01Scraper = Four01SealedScraper(setName)
     gauntletScraper = GauntletSealedScraper(setName)
+    houseOfCardsScraper = HouseOfCardsSealedScraper(setName)
 
 
     # Map scrapers to an identifier keyword
     scraperMap = {
-        # "houseofcards": houseOfCardsScraper,
         "four01": four01Scraper,
         "gauntlet": gauntletScraper,
+        "houseofcards": houseOfCardsScraper,
         # "kanatacg": kanatacgScraper,
         # "fusion": fusionScraper,
         # "everythinggames": everythingGamesScraper,
@@ -352,30 +400,18 @@ async def search_sealed(request: SealedSearch):
     # Filter out scrapers that are not requested in request.websites
     try:
         # if "all" in request.websites: then we want all scrapers
-        if "all" in request.websites:
+        if "all" in websites:
             scrapers = scraperMap.values()
         else:
-            scrapers = [scraperMap[website] for website in request.websites]
+            scrapers = [scraperMap[website] for website in websites]
     except KeyError:
         return {"error": "Invalid website provided"}
     
-    # scrapers = [
-    #     connectionGamesScraper      
-    # ]
-
     # Run scrapers in parallel
     with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
         threadResults = executor.map(transform, scrapers)
 
-    # Create a new search object
-    # post a log to the database
-    numResults = len(results)
-    log = Search(query=request.setName, websites=','.join(request.websites), queryType="sealed", results="", numResults=numResults, timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    SQLModel.metadata.create_all(engine)
-    session = Session(engine)
-    session.add(log)
-    session.commit()
-    session.close()
+    background_tasks.add_task(post_search, query=setName, websites=websites, query_type="sealed", results="", num_results=len(results))
 
     return results
     
