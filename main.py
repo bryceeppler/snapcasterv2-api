@@ -354,11 +354,8 @@ async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks
 
     # Scraper function
     def transform(scraper):
-        print("Scraping")
         scraper.scrape()
-        print("Scraping Complete")
         scraperResults = scraper.getResults()
-        print("results: ", scraperResults)
         for result in scraperResults:
             results.append(result)
         return
