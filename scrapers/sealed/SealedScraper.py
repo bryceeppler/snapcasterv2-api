@@ -40,7 +40,7 @@ class SealedScraper():
         if "collector" in string.lower():
             tags.append("collector")
         # if there is no Set or Draft tag, add the draft tag
-        if not "set" in tags and not "draft" in tags:
+        if not "set" in tags and not "draft" and not "collecter" in tags:
             tags.append("draft")
             
         return tags
