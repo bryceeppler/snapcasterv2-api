@@ -7,7 +7,6 @@ from .SealedScraper import SealedScraper
 
 class Four01SealedScraper(SealedScraper):
     """
-    Split cards can be searched using "//" as a split
 
     """
     def __init__(self, setName):
@@ -28,10 +27,8 @@ class Four01SealedScraper(SealedScraper):
         responseJson = requests.get(self.url)
         # parse the json response
         data = json.loads(responseJson.content) 
-
-        # create a list to return
-        cardList = []
-
+        if data['total_results'] == 0:
+            return
         # get the products
         for item in data['items']:
             name = item['l']
