@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 from .SealedScraper import SealedScraper
+# from SealedScraper import SealedScraper
 import sys
 import json
 
@@ -27,6 +28,12 @@ class HouseOfCardsSealedScraper(SealedScraper):
         self.baseUrl = 'https://houseofcards.ca'
         self.website='houseOfCards'
 
+    def getResults(self):
+        # we are overriding this for now. HouseofCards scrapes ALL sealed data, so we will filter out
+        # excess stuff here. But ideally we don't scrape it all every time. Push to database instead...
+        self.results = [result for result in self.results if self.setName.lower() in result['name'].lower()]
+        return self.results
+
     def scrape(self):
         # We need to check three different pages and they are all paginated
         curPage = 1
@@ -36,30 +43,30 @@ class HouseOfCardsSealedScraper(SealedScraper):
 
         for url in [boosterPackUrl, boosterBoxUrl, bundleUrl]:
             while True:
-                print("scraping url: " + url)
                 r = requests.get(url)
                 soup = BeautifulSoup(r.text, 'html.parser')
                 products = soup.find_all('div', class_='productCard__card')
-                print("found " + str(len(products)) + " products")
 
                 for product in products:
                     try:
                         name = product.find('p', class_='productCard__title').find('a').text
                         price = product.find('p', class_='productCard__price').text.strip()
+                        tags = self.setTags(name)
+                        image = "https:" + product.find('img', class_='productCard__img')['data-src']
+                        print("image: ", image)
                         # if there is a newline, take the first line
                         if '\n' in price:
                             price = price.split('\n')[0] 
                         price = float(price.replace('$', '').replace(' CAD', '').replace(',',"").strip())
-
                         self.results.append({
                             'name': name,
                             'link': self.baseUrl + product.find('a', class_='productCard__a')['href'],
-                            'image': '',
+                            'image': image,
                             'price': price,
                             'stock': -1,
                             'website': self.website,
                             'language': 'English',
-                            'tags': []
+                            'tags': tags
                         }) 
 
                     except Exception as e:
@@ -70,18 +77,29 @@ class HouseOfCardsSealedScraper(SealedScraper):
 
                 # Check the ol.pagination and see if there is an li element with a class of disabled that contains the text 'Next'
                 pagination = soup.find('ol', class_='pagination')
-                buttons = pagination.find_all('li', class_='disabled')
-                # If there is a disabled button with "next" in it, we are done, exit the while loop
-                if any('Next' in button.text for button in buttons):
+                if (pagination):
+                    buttons = pagination.find_all('li', class_='disabled')
+                    # If there is a disabled button with "next" in it, we are done, exit the while loop
+                    if any('Next' in button.text for button in buttons):
+                        curPage = 1
+                        break
+                                    
+                    elif curPage > 10:
+                        # just incase we get stuck in an infinite loop
+                        curPage = 1
+                        break
+
+                    else:
+                        curPage += 1
+                        url = url[:-1] + str(curPage)
+                else:
                     curPage = 1
                     break
-                                
-                elif curPage > 10:
-                    # just incase we get stuck in an infinite loop
-                    break
-
-                else:
-                    curPage += 1
-                    url = url[:-1] + str(curPage)
         
 
+def main():
+    scraper = HouseOfCardsSealedScraper('Dominaria')
+    scraper.scrape()
+
+if __name__ == "__main__":
+    main()
