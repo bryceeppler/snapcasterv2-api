@@ -1,3 +1,16 @@
+"""
+PopulateDB.py
+
+This is a script to update the set table in the database.
+Every time a new set is released, this script should be run to update the database.
+The SetList.json file is from MTGJSON and is used to get the set codes and names.
+
+In the future I would like to set up a script to run this automatically when a new set is released.
+
+Instructions:
+Download SetList.json from MtgJson and place it in the same directory as this script and the .env file.
+Run python PopulateDB.py
+"""
 # script to populate the database with the setList json file
 import json
 import psycopg2
