@@ -35,6 +35,7 @@ from scrapers.sealed.GauntletSealedScraper import GauntletSealedScraper
 from scrapers.sealed.Four01SealedScraper import Four01SealedScraper
 from scrapers.sealed.HouseOfCardsSealedScraper import HouseOfCardsSealedScraper
 from scrapers.sealed.ConnectionGamesSealedScraper import ConnectionGamesSealedScraper
+from scrapers.sealed.Jeux3DragonsSealedScraper import Jeux3DragonsSealedScraper
 
 from db.database import engine, SQLModel, Session
 from db.models import Search
@@ -367,6 +368,7 @@ async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks
     four01Scraper = Four01SealedScraper(setName)
     gauntletScraper = GauntletSealedScraper(setName)
     houseOfCardsScraper = HouseOfCardsSealedScraper(setName)
+    jeux3DragonsScraper = Jeux3DragonsSealedScraper(setName)
 
 
     # Map scrapers to an identifier keyword
@@ -381,7 +383,7 @@ async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks
         # "magicstronghold": magicStrongholdScraper,
         # "facetoface": faceToFaceScraper,
         # "topdeckhero": topDeckHeroScraper,
-        # "jeux3dragons": jeux3DragonsScraper,
+        "jeux3dragons": jeux3DragonsScraper,
         # 'sequencegaming': sequenceScraper,
         # 'atlas': atlasScraper,
         # 'hairyt': hairyTScraper,
