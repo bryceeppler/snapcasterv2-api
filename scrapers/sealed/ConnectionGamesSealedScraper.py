@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 from .SealedScraper import SealedScraper
+import re
 
 class ConnectionGamesSealedScraper(SealedScraper):
     """
@@ -41,18 +42,39 @@ class ConnectionGamesSealedScraper(SealedScraper):
             name = result.select_one('div.meta h4.name').getText()
             # get the href from the a tag with an itemprop="url" attribute
             link = self.baseUrl + result.select_one('a[itemprop="url"]')['href']
-            # if 'magic_singles' not in link:
-                # not a magic card
-                # continue
 
-            # get the set from div.meta span.category
-            setName = result.select_one('div.meta span.category').getText()
+            if 'magic_sealed' not in link:
+                continue
+
+            # setName = result.select_one('div.meta span.category').getText()
+            # if "sealed" not in setName.lower():
+            #     continue
 
             # get the image src from inside from the div with image class
             image = result.select_one('div.image img')['src']
+            language = self.setLanguage(name)
+            # if language is not english, remove it from the name
+            if "english" not in language.lower():
+                # Remove the language from the name, case insensitive.
+                # For example, "Booster Box JAPANESE" becomes "Booster Box"
+                name = re.sub(language, '', name, flags=re.IGNORECASE).strip()
+
+                # if there is a trailing dash, remove it
+                if name[-1] == '-':
+                    name = name[:-1].strip()
 
             for variant in result.select('div.variants div.variant-row'):
-                condition = variant.select_one('span.variant-short-info').getText()
                 # price comes from the span with class = "regular price"
                 price = variant.select_one('span.regular.price').getText().replace('CAD$ ', '')
-                print(name, setName, condition, price, link, image)
+                stock = variant.select_one('span.variant-qty').getText().replace(' In Stock', '')
+
+                self.results.append({
+                    'name': name,
+                    'link': link,
+                    'image': image,
+                    'price': float(price),
+                    'stock': int(stock),
+                    'website': self.website,
+                    'language': language,
+                    'tags': self.setTags(name)
+                })
