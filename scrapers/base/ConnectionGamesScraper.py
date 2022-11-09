@@ -90,8 +90,6 @@ class ConnectionGamesScraper(Scraper):
             image = result.select_one('div.image img')['src']
 
 
-            # TODO
-            # need to do this for each variant
             for variant in result.select('div.variants div.variant-row'):
                 condition = variant.select_one('span.variant-short-info').getText()
                 if 'NM' in condition:
