@@ -34,6 +34,7 @@ from scrapers.base.BorderCityScraper import BorderCityScraper
 from scrapers.sealed.GauntletSealedScraper import GauntletSealedScraper
 from scrapers.sealed.Four01SealedScraper import Four01SealedScraper
 from scrapers.sealed.HouseOfCardsSealedScraper import HouseOfCardsSealedScraper
+from scrapers.sealed.ConnectionGamesSealedScraper import ConnectionGamesSealedScraper
 
 from db.database import engine, SQLModel, Session
 from db.models import Search
@@ -218,6 +219,7 @@ async def search_single(request: SingleCardSearch):
 
     return results
     
+
 @app.post("/search/bulk/")
 async def search_bulk(request: BulkCardSearch):
     """
@@ -361,6 +363,7 @@ async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks
         return
 
     # Arrange scrapers
+    connectionGamesScraper = ConnectionGamesSealedScraper(setName)
     four01Scraper = Four01SealedScraper(setName)
     gauntletScraper = GauntletSealedScraper(setName)
     houseOfCardsScraper = HouseOfCardsSealedScraper(setName)
@@ -368,6 +371,7 @@ async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks
 
     # Map scrapers to an identifier keyword
     scraperMap = {
+        "connectiongames": connectionGamesScraper,
         "four01": four01Scraper,
         "gauntlet": gauntletScraper,
         "houseofcards": houseOfCardsScraper,
@@ -376,7 +380,6 @@ async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks
         # "everythinggames": everythingGamesScraper,
         # "magicstronghold": magicStrongholdScraper,
         # "facetoface": faceToFaceScraper,
-        # "connectiongames": connectionGamesScraper,
         # "topdeckhero": topDeckHeroScraper,
         # "jeux3dragons": jeux3DragonsScraper,
         # 'sequencegaming': sequenceScraper,
@@ -411,7 +414,6 @@ async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks
 
     return results
     
-
 
 # log search queries in database
 @app.post("/log/")
