@@ -1,11 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
 from .SealedScraper import SealedScraper
-# from SealedScraper import SealedScraper
 import sys
 import os
 import psycopg2
-import json
 import dotenv
 dotenv.load_dotenv()
 
@@ -160,10 +158,7 @@ class HouseOfCardsSealedScraper(SealedScraper):
 
 
         except Exception as e:
-            print(e)
-            # print error details
             print("Error on line {}".format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
-            print("Error connecting to database")
         
 
 def main():
