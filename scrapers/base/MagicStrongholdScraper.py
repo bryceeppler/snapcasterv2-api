@@ -1,14 +1,11 @@
-from re import I
-from unittest import result
-from bs4 import BeautifulSoup
 import requests
 import json
 from .Scraper import Scraper
 
 class MagicStrongholdScraper(Scraper):
     """
-    Magic Stronghold uses a completely exposed API to get the stock of cards
-    We can literally hit the API and get all the information we need
+    Magic Stronghold uses an API to get the stock of cards
+    We can hit the API and get all the information we need
 
     https://api.conductcommerce.com/v1/advancedSearch
 
@@ -23,26 +20,6 @@ class MagicStrongholdScraper(Scraper):
         self.website = 'magicstronghold'
 
     def scrape(self):
-        # get the json data from this curl request
-        # curl 'https://api.conductcommerce.com/v1/advancedSearch' \
-        #   -H 'authority: api.conductcommerce.com' \
-        #   -H 'accept: application/json, text/javascript, */*; q=0.01' \
-        #   -H 'accept-language: en-US,en;q=0.9' \
-        #   -H 'cache-control: no-cache' \
-        #   -H 'content-type: text/plain' \
-        #   -H 'origin: https://www.magicstronghold.com' \
-        #   -H 'pragma: no-cache' \
-        #   -H 'referer: https://www.magicstronghold.com/' \
-        #   -H 'sec-ch-ua: "Chromium";v="106", "Google Chrome";v="106", "Not;A=Brand";v="99"' \
-        #   -H 'sec-ch-ua-mobile: ?0' \
-        #   -H 'sec-ch-ua-platform: "macOS"' \
-        #   -H 'sec-fetch-dest: empty' \
-        #   -H 'sec-fetch-mode: cors' \
-        #   -H 'sec-fetch-site: cross-site' \
-        #   -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36' \
-        #   --data-raw $'{"productTypeID":1,"name":"elspeth, sun\'s champion","host":"www.magicstronghold.com"}' \
-        #   --compressed
-        
         response = requests.post(self.url, 
             json={
                 "productTypeID": 1,
