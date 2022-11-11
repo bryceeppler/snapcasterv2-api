@@ -69,8 +69,8 @@ class Jeux3DragonsSealedScraper(SealedScraper):
                     'name': name,
                     'link': link,
                     'image': image,
-                    'price': price,
-                    'stock': stock,
+                    'price': float(price),
+                    'stock': int(stock),
                     'website': self.website,
                     'language': language,
                     'tags': tags
