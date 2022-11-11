@@ -33,6 +33,7 @@ from scrapers.base.BorderCityScraper import BorderCityScraper
 
 from scrapers.sealed.GauntletSealedScraper import GauntletSealedScraper
 from scrapers.sealed.Four01SealedScraper import Four01SealedScraper
+from scrapers.sealed.FusionSealedScraper import FusionSealedScraper
 from scrapers.sealed.HouseOfCardsSealedScraper import HouseOfCardsSealedScraper
 from scrapers.sealed.ConnectionGamesSealedScraper import ConnectionGamesSealedScraper
 from scrapers.sealed.Jeux3DragonsSealedScraper import Jeux3DragonsSealedScraper
@@ -366,6 +367,7 @@ async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks
     # Arrange scrapers
     connectionGamesScraper = ConnectionGamesSealedScraper(setName)
     four01Scraper = Four01SealedScraper(setName)
+    fustionScraper = FusionSealedScraper(setName)
     gauntletScraper = GauntletSealedScraper(setName)
     houseOfCardsScraper = HouseOfCardsSealedScraper(setName)
     jeux3DragonsScraper = Jeux3DragonsSealedScraper(setName)
@@ -375,6 +377,7 @@ async def search_sealed(request: SealedSearch, background_tasks: BackgroundTasks
     scraperMap = {
         "connectiongames": connectionGamesScraper,
         "four01": four01Scraper,
+        "fusion": fustionScraper,
         "gauntlet": gauntletScraper,
         "houseofcards": houseOfCardsScraper,
         # "kanatacg": kanatacgScraper,

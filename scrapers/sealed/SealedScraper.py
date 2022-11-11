@@ -1,4 +1,5 @@
 import string
+import re
 
 class SealedScraper():
     def __init__(self, setName):
@@ -40,14 +41,23 @@ class SealedScraper():
         if "collector" in string.lower():
             tags.append("collector")
         # if there is no Set or Draft tag, add the draft tag
-        if not "set" in tags and not "draft" in tags and not "collecter" in tags:
+        if not "set" in tags and not "draft" in tags and not "collector" in tags:
             tags.append("draft")
             
         return tags
 
     def setLanguage(self, string):
         """
-        returns a string of the language of the card
+        Returns a string containing the language of the set
+
+        These are the possible languages for MTG printings
+        English, Russian, Korean, French, German, 
+        Spanish, Italian, Japanese, Portuguese, Chinese,
+        Chinese Traditional, Chinese Simplified
+
+        If we find any of these in the given string (case insensitive), 
+        we return the language. If we don't find any of these, we return
+        English
         """
         if "english" in string.lower():
             return "English"
@@ -73,28 +83,39 @@ class SealedScraper():
             return "English"
 
     def removeLanguage(self, string):
-        # We want to remove any language from the name and return the string
-        if "english" in string.lower():
-            return string.replace("English", "")
-        elif "russian" in string.lower():
-            return string.replace("Russian", "")
-        elif "korean" in string.lower():
-            return string.replace("Korean", "")
-        elif "french" in string.lower():
-            return string.replace("French", "")
-        elif "german" in string.lower():
-            return string.replace("German", "")
-        elif "spanish" in string.lower():
-            return string.replace("Spanish", "")
-        elif "italian" in string.lower():
-            return string.replace("Italian", "")
-        elif "japanese" in string.lower():
-            return string.replace("Japanese", "")
-        elif "portuguese" in string.lower():
-            return string.replace("Portuguese", "")
-        elif "chinese" in string.lower():
-            return string.replace("Chinese", "")
-        else:
-            return string
+        """
+        Removes the language from the string, and returns the string without
+        the language.
 
+        These are the possible languages for MTG printings
+        English, Russian, Korean, French, German,
+        Spanish, Italian, Japanese, Portuguese, Chinese,
+        Chinese Traditional, Chinese Simplified
+
+        Check if any of these are in the string (case insensitive), and if they
+        are, remove them from the string and return the string without the language.
+        """
+        englishExpression = re.compile(r"english", re.IGNORECASE)
+        russianExpression = re.compile(r"russian", re.IGNORECASE)
+        koreanExpression = re.compile(r"korean", re.IGNORECASE)
+        frenchExpression = re.compile(r"french", re.IGNORECASE)
+        germanExpression = re.compile(r"german", re.IGNORECASE)
+        spanishExpression = re.compile(r"spanish", re.IGNORECASE)
+        italianExpression = re.compile(r"italian", re.IGNORECASE)
+        japaneseExpression = re.compile(r"japanese", re.IGNORECASE)
+        portugueseExpression = re.compile(r"portuguese", re.IGNORECASE)
+        chineseExpression = re.compile(r"chinese", re.IGNORECASE)
+        
+        string = englishExpression.sub("", string)
+        string = russianExpression.sub("", string)
+        string = koreanExpression.sub("", string)
+        string = frenchExpression.sub("", string)
+        string = germanExpression.sub("", string)
+        string = spanishExpression.sub("", string)
+        string = italianExpression.sub("", string)
+        string = japaneseExpression.sub("", string)
+        string = portugueseExpression.sub("", string)
+        string = chineseExpression.sub("", string)
+        
+        return string
 

@@ -98,6 +98,7 @@ class HouseOfCardsSealedScraper(SealedScraper):
                         for product in products:
                             try:
                                 name = product.find('p', class_='productCard__title').find('a').text
+                                name = self.removeLanguage(name).replace(" - ", " ").strip()
                                 price = product.find('p', class_='productCard__price').text.strip()
                                 tags = self.setTags(name)
                                 image = "https:" + product.find('img', class_='productCard__img')['data-src']
